@@ -12,12 +12,13 @@ import org.openjdk.jmh.annotations.Warmup;
 import org.openjdk.jmh.infra.Blackhole;
 
 @Fork(value = 0)
-@Warmup(iterations = 2, time = 5)
-@Measurement(iterations = 2, time = 20)
+@Warmup(iterations = 0)
+@Measurement(iterations = 2, time = 1)
 @BenchmarkMode(Mode.Throughput)
-@OutputTimeUnit(TimeUnit.SECONDS)
+@OutputTimeUnit(TimeUnit.MILLISECONDS)
 public class JmhExample {
-    @Benchmark
+    static int x = 0;
+    // @Benchmark
     public static void askClock(Blackhole bh) {
         bh.consume(System.currentTimeMillis());
     }
@@ -33,9 +34,14 @@ public class JmhExample {
         }
     }
 
-    // @Benchmark
-    public static void empty() {
+    public static Object empty() {
+        x++;
+        return null;
+    }
 
+    @Benchmark
+    public static void emptyLooper(Blackhole blackhole) {
+        x++;
     }
 
     public static void main(String[] args) throws Exception {
