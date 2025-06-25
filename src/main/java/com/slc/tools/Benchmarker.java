@@ -3,7 +3,7 @@ package com.slc.tools;
 import java.time.Duration;
 
 public class Benchmarker {
-    private volatile int _completedCalls;
+    private int _completedCalls;
     private final Runnable _BENCHMARK_FUNCTION;
 
     public Benchmarker(Runnable functionToBenchmark) {
@@ -15,6 +15,7 @@ public class Benchmarker {
     }
 
     public static void main(String[] args) {
+        System.out.println(calibrate());
         Benchmarker benchmarker = new Benchmarker(() -> {
             try {
                 Thread.sleep(10);
@@ -64,6 +65,16 @@ public class Benchmarker {
 
         System.out.println(summaryMessage.toString());
 
+    }
+
+    // Measures how long System.nanoTime() takes on average.
+    public static long calibrate() {
+        long startTime = System.nanoTime();
+        int numLoops = 1_000_000;
+        for (int i = 0; i < numLoops; i++) {
+            System.nanoTime();
+        }
+        return System.nanoTime() - startTime;
     }
 
 }
