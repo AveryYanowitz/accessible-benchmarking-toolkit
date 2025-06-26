@@ -8,30 +8,38 @@ public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Clock Checks:          ");
+        sb.append("Clock Checks:             ");
         sb.append(clockChecks);
         sb.append("\n");
 
-        sb.append("Loops Between Checks:  ");
+        sb.append("Loops Between Checks:     ");
         sb.append(loopsBetweenChecks);
         sb.append("\n");
 
-        sb.append("Maximum Duration Set:  ");
-        sb.append(maxDuration.toString()
-                .substring(2)); // remove the weird "PT" at the start
+        sb.append("Maximum Duration Set:     ");
+        sb.append(_formatDuration(maxDuration));
         sb.append("\n");
 
-        sb.append("Total Loops Completed: ");
+        sb.append("Total Loops Completed:    ");
         sb.append(loopsCompleted);
         sb.append("\n");
 
-        sb.append("Total Time Elapsed:    ");
-        sb.append(actualTimeElapsed.toString()
-                .substring(2)); // remove the weird "PT" at the start
+        sb.append("Total Time Elapsed:       ");
+        sb.append(_formatDuration(actualTimeElapsed));
         sb.append("\n");
 
         return sb.toString();
-    }                        
+    }
+    
+    private static String _formatDuration(Duration duration) {
+        String fullStr = duration.toString(); // has extra chars we don't want
+        String numberOnly = fullStr.substring(2, fullStr.length() - 1);
+        String secs = " sec";
+        if (!numberOnly.equals("1")) {
+            secs += "s";
+        }
+        return numberOnly + secs;
+    }
     
     /** Currently unused; allows multiple BenchmarkStats objects to be summed */
     public static BenchmarkStats add(BenchmarkStats stats1, BenchmarkStats stats2) {
