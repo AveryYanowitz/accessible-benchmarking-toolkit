@@ -1,7 +1,6 @@
 package com.slc.tools;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
@@ -32,7 +31,7 @@ public class Demonstration {
         Stream<int[]> arrsToTest = Stream.of(a1, a2, a3, a4);
         
         List<BenchmarkStats> results = Benchmarking.testStream(arrsToTest, Demonstration::bubbleSort,
-                                                Duration.ofMillis(10_000), 10)
+                                                Duration.ofMillis(2000), 10)
                                                 .toList();
         for (BenchmarkStats stat : results) {
             System.out.println(stat);

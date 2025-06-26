@@ -27,20 +27,13 @@ public class Benchmarking {
                         Duration maxDuration, int numberOfLoops) {
 
         long maxNanoTime = maxDuration.toNanos();
-        int outerLoops, innerLoops;
-        if (numberOfLoops < 20) {
-            outerLoops = 1;
-            innerLoops = numberOfLoops;
-        } else {
-            outerLoops = 10;
-            innerLoops = numberOfLoops / 10;
-        }
-
+        int clockChecks = 0;
         int completedLoops = 0;
         long startTime = System.nanoTime();
-        for (int i = 0; i < outerLoops; i++) {
+        while (true) {
+            clockChecks++;
             if ((System.nanoTime() - startTime) < maxNanoTime) {
-                for (int j = 0; j < innerLoops; j++) {
+                for (int i = 0; i < numberOfLoops; i++) {
                     consumer.accept(object);
                     completedLoops++;
                 }
@@ -51,7 +44,7 @@ public class Benchmarking {
         long elapsedRaw = System.nanoTime() - startTime;
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
 
-        return new BenchmarkStats(innerLoops, outerLoops, maxDuration, completedLoops, elapsedTime);
+        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime);
 
     }
 

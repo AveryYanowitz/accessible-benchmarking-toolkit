@@ -2,8 +2,36 @@ package com.slc.tools;
 
 import java.time.Duration;
 
-public record BenchmarkStats (int innerLoops, int outerLoops, Duration totalDuration,
-                    int loopsCompleted, Duration timeElapsed) {
+public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration maxDuration,
+                    int loopsCompleted, Duration actualTimeElapsed) {
+    
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Clock Checks:          ");
+        sb.append(clockChecks);
+        sb.append("\n");
+
+        sb.append("Loops Between Checks:  ");
+        sb.append(loopsBetweenChecks);
+        sb.append("\n");
+
+        sb.append("Maximum Duration Set:  ");
+        sb.append(maxDuration.toString()
+                .substring(2)); // remove the weird "PT" at the start
+        sb.append("\n");
+
+        sb.append("Total Loops Completed: ");
+        sb.append(loopsCompleted);
+        sb.append("\n");
+
+        sb.append("Total Time Elapsed:    ");
+        sb.append(actualTimeElapsed.toString()
+                .substring(2)); // remove the weird "PT" at the start
+        sb.append("\n");
+
+        return sb.toString();
+    }                        
     
     /** Currently unused; allows multiple BenchmarkStats objects to be summed */
     public static BenchmarkStats add(BenchmarkStats stats1, BenchmarkStats stats2) {
@@ -17,12 +45,12 @@ public record BenchmarkStats (int innerLoops, int outerLoops, Duration totalDura
             return stats1;
         }
 
-        int innerLoopSum = stats1.innerLoops + stats2.innerLoops;
-        int outerLoopSum = stats1.outerLoops + stats2.outerLoops;
-        Duration totalDurationSum = stats1.totalDuration.plus(stats2.totalDuration);
+        int clockChecksSum = stats1.clockChecks + stats2.clockChecks;
+        int loopsBetweenSum = stats1.loopsBetweenChecks + stats2.loopsBetweenChecks;
+        Duration totalDurationSum = stats1.maxDuration.plus(stats2.maxDuration);
         int completedLoopsSum = stats1.loopsCompleted + stats2.loopsCompleted;
-        Duration timeElapsedSum = stats1.timeElapsed.plus(stats2.timeElapsed);
+        Duration timeElapsedSum = stats1.actualTimeElapsed.plus(stats2.actualTimeElapsed);
 
-        return new BenchmarkStats(innerLoopSum, outerLoopSum, totalDurationSum, completedLoopsSum, timeElapsedSum);
+        return new BenchmarkStats(clockChecksSum, loopsBetweenSum, totalDurationSum, completedLoopsSum, timeElapsedSum);
     }
 }
