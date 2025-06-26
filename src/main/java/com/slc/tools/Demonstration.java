@@ -30,8 +30,8 @@ public class Demonstration {
         int[] a4 = r.ints(8000).toArray();
         Stream<int[]> arrsToTest = Stream.of(a1, a2, a3, a4);
         
-        List<BenchmarkStats> results = Benchmarking.testStream(arrsToTest, Demonstration::bubbleSort,
-                                                Duration.ofMillis(1000), 10)
+        List<BenchmarkStats> results = Benchmarking.testStream(Demonstration::bubbleSort, arrsToTest,
+                                                Duration.ofMillis(1000), 10, "bubble sort")
                                                 .toList();
         for (BenchmarkStats stat : results) {
             System.out.println(stat);

@@ -10,21 +10,21 @@ public class Benchmarking {
      * Takes a Stream of objects and time-tests each of them,
      * returning a new Stream of the results
      * @param <T> The type of the object to be tested
-     * @param dataToTest A Stream of objects
-     * @param methodToTest An algorithm to test the provided
+     * @param methodToTest An algorithm to test
+     * @param dataToTest A Stream of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param numberOfLoops The maximum number of loops to test
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> testStream(Stream<T> dataToTest, Consumer<T> methodToTest,
-                                                    Duration maxDuration, int numberOfLoops) {
-        return dataToTest.map((T streamMember) -> {
-            return _singleTest(streamMember, methodToTest, maxDuration, numberOfLoops);
-        });        
+    public static <T> Stream<BenchmarkStats> testStream(Consumer<T> methodToTest, Stream<T> dataToTest,
+                                                    Duration maxDuration, int numberOfLoops, String testID) {
+        return dataToTest.map((T streamMember) -> 
+            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, testID)
+        );        
     }
     
-    private static <T> BenchmarkStats _singleTest(T object, Consumer<T> consumer, 
-                        Duration maxDuration, int numberOfLoops) {
+    private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
+                                    Duration maxDuration, int numberOfLoops, String testID) {
 
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
@@ -44,7 +44,7 @@ public class Benchmarking {
         long elapsedRaw = System.nanoTime() - startTime;
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
 
-        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime);
+        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, testID);
 
     }
 

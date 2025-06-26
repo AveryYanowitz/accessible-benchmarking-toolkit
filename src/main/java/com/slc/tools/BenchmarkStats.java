@@ -3,11 +3,14 @@ package com.slc.tools;
 import java.time.Duration;
 
 public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration maxDuration,
-                    int loopsCompleted, Duration actualTimeElapsed) {
+                    int loopsCompleted, Duration actualTimeElapsed, String functionName) {
     
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        sb.append(functionName);
+        sb.append("\n");
+
         sb.append("Clock Checks:             ");
         sb.append(clockChecks);
         sb.append("\n");
@@ -17,7 +20,7 @@ public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration 
         sb.append("\n");
 
         sb.append("Maximum Duration Set:     ");
-        sb.append(_formatDuration(maxDuration));
+        sb.append(StringUtils.formatDuration(maxDuration));
         sb.append("\n");
 
         sb.append("Total Loops Completed:    ");
@@ -25,22 +28,12 @@ public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration 
         sb.append("\n");
 
         sb.append("Total Time Elapsed:       ");
-        sb.append(_formatDuration(actualTimeElapsed));
+        sb.append(StringUtils.formatDuration(actualTimeElapsed));
         sb.append("\n");
 
         return sb.toString();
     }
-    
-    private static String _formatDuration(Duration duration) {
-        String fullStr = duration.toString(); // has extra chars we don't want
-        String numberOnly = fullStr.substring(2, fullStr.length() - 1);
-        String secs = " sec";
-        if (!numberOnly.equals("1")) {
-            secs += "s";
-        }
-        return numberOnly + secs;
-    }
-    
+        
     /** Currently unused; allows multiple BenchmarkStats objects to be summed */
     public static BenchmarkStats add(BenchmarkStats stats1, BenchmarkStats stats2) {
         if (stats1 == null) {
@@ -59,6 +52,6 @@ public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration 
         int completedLoopsSum = stats1.loopsCompleted + stats2.loopsCompleted;
         Duration timeElapsedSum = stats1.actualTimeElapsed.plus(stats2.actualTimeElapsed);
 
-        return new BenchmarkStats(clockChecksSum, loopsBetweenSum, totalDurationSum, completedLoopsSum, timeElapsedSum);
+        return new BenchmarkStats(clockChecksSum, loopsBetweenSum, totalDurationSum, completedLoopsSum, timeElapsedSum, "Multiple Functions");
     }
 }
