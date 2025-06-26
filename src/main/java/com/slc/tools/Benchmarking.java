@@ -13,18 +13,23 @@ public class Benchmarking {
      * @param methodToTest An algorithm to test
      * @param dataToTest A Stream of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
-     * @param numberOfLoops The maximum number of loops to test
+     * @param numberOfLoops The number of loops to run between tests
+     * @param idSource The field or method name from which to derive the run ID
+     * @param idIsMethod True if idSource names a method, false if it names a field
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> testStream(Consumer<T> methodToTest, Stream<T> dataToTest,
-                                                    Duration maxDuration, int numberOfLoops, String testID) {
+    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
+                                                    Duration maxDuration, int numberOfLoops, String idSource,
+                                                    boolean idIsMethod)
+                                                    throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
-            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, testID)
-        );        
+            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod)
+        );
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
-                                    Duration maxDuration, int numberOfLoops, String testID) {
+                                    Duration maxDuration, int numberOfLoops, 
+                                    String propertyID, boolean searchMethodsNotFields) {
 
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
@@ -43,9 +48,20 @@ public class Benchmarking {
         }
         long elapsedRaw = System.nanoTime() - startTime;
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
+        
+        StringBuilder id = new StringBuilder("Run ID: ");
+        try {
+            if (searchMethodsNotFields) {            
+                id.append(StringUtils.getMethod(object, propertyID));
+            } else {
+                id.append(StringUtils.getField(object, propertyID));
+            }
+        } catch (ReflectiveOperationException e) {
+            e.printStackTrace();
+            id.append("None found");
+        }
 
-        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, testID);
-
+        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id.toString());
     }
 
 }
