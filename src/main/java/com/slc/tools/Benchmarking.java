@@ -6,8 +6,12 @@ import java.util.stream.Stream;
 
 public class Benchmarking {
 
-    public static <T> BenchmarkStats testStream(Stream<T> dataToTest, Consumer<T> methodToTest) {
-        BenchmarkStats totalStats = null;
+    public static <T> Stream<BenchmarkStats> testStream(Stream<T> dataToTest, Consumer<T> methodToTest,
+                                                    Duration maxDuration, int numberOfLoops) {
+        Stream<BenchmarkStats> results = dataToTest.map((T element) -> {
+            return _singleTest(element, methodToTest, maxDuration, numberOfLoops);
+        });
+        return results;
         
     }
     
