@@ -1,5 +1,7 @@
 package com.slc.tools;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -29,7 +31,7 @@ public class Benchmarking {
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int numberOfLoops, 
-                                    String propertyID, boolean idIsMethod) {
+                                    String propertyName, boolean idIsMethod) {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
@@ -42,7 +44,7 @@ public class Benchmarking {
             }
         }
 
-        String id = _getRunID(object, propertyID, idIsMethod);
+        String id = _getPropertyByName(object, propertyName, idIsMethod);
 
         clockChecks++; // last check returned false, so it didn't increment
         long elapsedRaw = System.nanoTime() - startTime;
@@ -51,13 +53,17 @@ public class Benchmarking {
         return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id);
     }
 
-    private static <T> String _getRunID(T object, String propertyID, boolean searchMethodsNotFields) {
+    private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethodsNotFields) {
         StringBuilder id = new StringBuilder("Covariate: ");
         try {
             if (searchMethodsNotFields) {            
-                id.append(StringUtils.getMethod(object, propertyID));
+                Method method = object.getClass().getMethod(propertyName);
+                method.setAccessible(true);
+                id.append(method.invoke(object).toString());
             } else {
-                id.append(StringUtils.getField(object, propertyID));
+                Field field = object.getClass().getDeclaredField(propertyName);
+                field.setAccessible(true);
+                id.append(field.get(object).toString());
             }
         } catch (ReflectiveOperationException e) {
             id.append("None found");

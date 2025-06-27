@@ -33,19 +33,4 @@ public class StringUtils {
         }
         return numberOnly + secs;
     }
-
-    public static String getField(Object obj, String fieldName) 
-            throws ReflectiveOperationException {
-        Field field = obj.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field.get(obj).toString();
-    }
-
-    public static String getMethod(Object obj, String methodName)
-            throws ReflectiveOperationException {
-        Method method = obj.getClass().getMethod(methodName);
-        method.setAccessible(true);
-        return method.invoke(obj).toString();
-    }
-
 }
