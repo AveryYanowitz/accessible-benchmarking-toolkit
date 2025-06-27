@@ -2,8 +2,27 @@ package com.slc.tools;
 
 import java.time.Duration;
 
-public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration maxDuration,
+import lombok.Getter;
+
+@Getter
+public class BenchmarkStats {
+
+    private final int clockChecks, loopsBetweenChecks, loopsCompleted;
+    private final double averageTimeMillis;
+    private final Duration maxDuration, actualTimeElapsed;
+    private final String functionName;
+
+    public BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
                     int loopsCompleted, Duration actualTimeElapsed, String functionName) {
+        this.clockChecks = clockChecks;
+        this.loopsBetweenChecks = loopsBetweenChecks;
+        this.maxDuration = maxDuration;
+        this.loopsCompleted = loopsCompleted;
+        this.actualTimeElapsed = actualTimeElapsed;
+        this.functionName = functionName;
+
+        this.averageTimeMillis = loopsCompleted / (double) actualTimeElapsed.toMillis();
+    }
     
     @Override
     public String toString() {
@@ -31,27 +50,10 @@ public record BenchmarkStats (int clockChecks, int loopsBetweenChecks, Duration 
         sb.append(StringUtils.formatDuration(actualTimeElapsed));
         sb.append("\n");
 
+        sb.append("Average Time Per Call:    ");
+        sb.append(averageTimeMillis);
+        sb.append(" ms \n");
+
         return sb.toString();
-    }
-        
-    /** Currently unused; allows multiple BenchmarkStats objects to be summed */
-    public static BenchmarkStats add(BenchmarkStats stats1, BenchmarkStats stats2) {
-        if (stats1 == null) {
-            if (stats2 != null) {
-                return stats2;
-            } else {
-                throw new IllegalArgumentException("Cannot add two null records");
-            }
-        } else if (stats2 == null) {
-            return stats1;
-        }
-
-        int clockChecksSum = stats1.clockChecks + stats2.clockChecks;
-        int loopsBetweenSum = stats1.loopsBetweenChecks + stats2.loopsBetweenChecks;
-        Duration totalDurationSum = stats1.maxDuration.plus(stats2.maxDuration);
-        int completedLoopsSum = stats1.loopsCompleted + stats2.loopsCompleted;
-        Duration timeElapsedSum = stats1.actualTimeElapsed.plus(stats2.actualTimeElapsed);
-
-        return new BenchmarkStats(clockChecksSum, loopsBetweenSum, totalDurationSum, completedLoopsSum, timeElapsedSum, "Multiple Functions");
     }
 }
