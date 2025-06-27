@@ -38,6 +38,20 @@
             <artifactId>jmh-core</artifactId>
             <version>1.37</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.19.1</version>
+        </dependency>
+
+        <!-- support for "Java 8 date time api" -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.19.1</version>
+        </dependency>
+
     </dependencies>
 
     <build>

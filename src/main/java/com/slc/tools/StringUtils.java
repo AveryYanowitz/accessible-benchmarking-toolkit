@@ -1,7 +1,5 @@
 package com.slc.tools;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.Duration;
 
 public class StringUtils {

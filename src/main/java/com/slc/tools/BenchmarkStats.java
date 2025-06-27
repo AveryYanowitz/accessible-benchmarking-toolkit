@@ -10,16 +10,16 @@ public class BenchmarkStats {
     private final int clockChecks, loopsBetweenChecks, loopsCompleted;
     private final double averageTimeMillis;
     private final Duration maxDuration, actualTimeElapsed;
-    private final String functionName;
+    private final String covariate;
 
     public BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
-                    int loopsCompleted, Duration actualTimeElapsed, String functionName) {
+                    int loopsCompleted, Duration actualTimeElapsed, String covariate) {
         this.clockChecks = clockChecks;
         this.loopsBetweenChecks = loopsBetweenChecks;
         this.maxDuration = maxDuration;
         this.loopsCompleted = loopsCompleted;
         this.actualTimeElapsed = actualTimeElapsed;
-        this.functionName = functionName;
+        this.covariate = covariate;
 
         this.averageTimeMillis = loopsCompleted / (double) actualTimeElapsed.toMillis();
     }
@@ -27,8 +27,8 @@ public class BenchmarkStats {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(functionName);
-        sb.append("\n");
+        sb.append(covariate);
+        sb.append("\n\n");
 
         sb.append("Clock Checks:             ");
         sb.append(clockChecks);

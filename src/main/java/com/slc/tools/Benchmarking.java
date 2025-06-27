@@ -35,6 +35,7 @@ public class Benchmarking {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
+
         long startTime = System.nanoTime();
         while ((System.nanoTime() - startTime) < maxNanoTime) {
             clockChecks++;
@@ -43,20 +44,18 @@ public class Benchmarking {
                 completedLoops++;
             }
         }
-
-        String id = _getPropertyByName(object, propertyName, idIsMethod);
-
-        clockChecks++; // last check returned false, so it didn't increment
         long elapsedRaw = System.nanoTime() - startTime;
+        
+        clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-
+        String id = _getPropertyByName(object, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id);
     }
 
-    private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethodsNotFields) {
+    private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethods) {
         StringBuilder id = new StringBuilder("Covariate: ");
         try {
-            if (searchMethodsNotFields) {            
+            if (searchMethods) {            
                 Method method = object.getClass().getMethod(propertyName);
                 method.setAccessible(true);
                 id.append(method.invoke(object).toString());
@@ -68,7 +67,6 @@ public class Benchmarking {
         } catch (ReflectiveOperationException e) {
             id.append("None found");
         }
-        id.append("\n");
         return id.toString();
     }
 

@@ -1,10 +1,14 @@
 package com.slc.tools;
 
+import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Demonstration {
     public static void bubbleSort(List<Integer> a) {
@@ -32,7 +36,7 @@ public class Demonstration {
         return list;
     }
 
-    public static void main(String[] args) throws ReflectiveOperationException {
+    public static void main(String[] args) throws Exception {
         List<Integer> l1 = getRandom(1000);
         List<Integer> l2 = getRandom(2000);
         List<Integer> l3 = getRandom(4000);
@@ -46,5 +50,11 @@ public class Demonstration {
         for (BenchmarkStats stat : results) {
             System.out.println(stat);
         }
+
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+        File f = new File("src/main/resources/testing.json");
+        om.writeValue(f, results);
+        
     }
 }
