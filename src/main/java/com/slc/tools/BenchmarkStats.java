@@ -67,12 +67,11 @@ public class BenchmarkStats {
         return sb.toString();
     }
 
-    public static void jsonify(List<BenchmarkStats> results) throws IOException {
+    public static void jsonify(List<BenchmarkStats> results, File jsonFile) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
 
-        File f = new File("src/main/resources/testing.json");
         om.enable(SerializationFeature.INDENT_OUTPUT);
-        om.writeValue(f, results);
+        om.writeValue(jsonFile, results);
     }
 }
