@@ -1,14 +1,10 @@
 package com.slc.tools;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 public class Demonstration {
     public static void bubbleSort(List<Integer> a) {
@@ -45,16 +41,11 @@ public class Demonstration {
         
         
         List<BenchmarkStats> results = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
-                                                Duration.ofMillis(1000), 10, "size", true)
+                                                Duration.ofMillis(1000), 10, "size", true, "bubbleSort")
                                                 .toList();
         for (BenchmarkStats stat : results) {
             System.out.println(stat);
         }
-
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        File f = new File("src/main/resources/testing.json");
-        om.writeValue(f, results);
-        
+        BenchmarkStats.jsonify(results);
     }
 }

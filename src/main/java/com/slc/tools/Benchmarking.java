@@ -18,20 +18,21 @@ public class Benchmarking {
      * @param numberOfLoops The number of loops to run between tests
      * @param idSource The field or method name from which to derive the run ID
      * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int numberOfLoops, 
-                                                    String idSource, boolean idIsMethod)
+                                                    String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
-            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod)
+            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod, testName)
         );
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int numberOfLoops, 
-                                    String propertyName, boolean idIsMethod) {
+                                    String propertyName, boolean idIsMethod, String testName) {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
@@ -49,25 +50,23 @@ public class Benchmarking {
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
         String id = _getPropertyByName(object, propertyName, idIsMethod);
-        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id);
+        return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id, testName);
     }
 
     private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethods) {
-        StringBuilder id = new StringBuilder("Covariate: ");
         try {
             if (searchMethods) {            
                 Method method = object.getClass().getMethod(propertyName);
                 method.setAccessible(true);
-                id.append(method.invoke(object).toString());
+                return method.invoke(object).toString();
             } else {
                 Field field = object.getClass().getDeclaredField(propertyName);
                 field.setAccessible(true);
-                id.append(field.get(object).toString());
+                return field.get(object).toString();
             }
         } catch (ReflectiveOperationException e) {
-            id.append("None found");
+            return "N/A";
         }
-        return id.toString();
     }
 
 }

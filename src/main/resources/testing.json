@@ -1,1 +1,37 @@
-[{"clockChecks":118,"loopsBetweenChecks":10,"loopsCompleted":1170,"averageTimeMillis":1.1618669314796426,"maxDuration":1.000000000,"actualTimeElapsed":1.007443709,"functionName":"Covariate: 1000\n"},{"clockChecks":31,"loopsBetweenChecks":10,"loopsCompleted":300,"averageTimeMillis":0.2994011976047904,"maxDuration":1.000000000,"actualTimeElapsed":1.002841583,"functionName":"Covariate: 2000\n"},{"clockChecks":9,"loopsBetweenChecks":10,"loopsCompleted":80,"averageTimeMillis":0.07393715341959335,"maxDuration":1.000000000,"actualTimeElapsed":1.082280708,"functionName":"Covariate: 4000\n"},{"clockChecks":3,"loopsBetweenChecks":10,"loopsCompleted":20,"averageTimeMillis":0.011785503830288745,"maxDuration":1.000000000,"actualTimeElapsed":1.697904125,"functionName":"Covariate: 8000\n"}]
+[ {
+  "indepVar" : "1000",
+  "testName" : "bubbleSort",
+  "clockChecks" : 118,
+  "loopsBetweenChecks" : 10,
+  "loopsCompleted" : 1170,
+  "averageTimeMillis" : 1.1653386454183268,
+  "maxDuration" : 1.000000000,
+  "actualTimeElapsed" : 1.004702250
+}, {
+  "indepVar" : "2000",
+  "testName" : "bubbleSort",
+  "clockChecks" : 31,
+  "loopsBetweenChecks" : 10,
+  "loopsCompleted" : 300,
+  "averageTimeMillis" : 0.2997002997002997,
+  "maxDuration" : 1.000000000,
+  "actualTimeElapsed" : 1.001243792
+}, {
+  "indepVar" : "4000",
+  "testName" : "bubbleSort",
+  "clockChecks" : 9,
+  "loopsBetweenChecks" : 10,
+  "loopsCompleted" : 80,
+  "averageTimeMillis" : 0.06773920406435224,
+  "maxDuration" : 1.000000000,
+  "actualTimeElapsed" : 1.181749541
+}, {
+  "indepVar" : "8000",
+  "testName" : "bubbleSort",
+  "clockChecks" : 3,
+  "loopsBetweenChecks" : 10,
+  "loopsCompleted" : 20,
+  "averageTimeMillis" : 0.011785503830288745,
+  "maxDuration" : 1.000000000,
+  "actualTimeElapsed" : 1.697688917
+} ]
