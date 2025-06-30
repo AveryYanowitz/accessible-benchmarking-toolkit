@@ -1,6 +1,7 @@
 package com.slc.tools;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -37,16 +38,18 @@ public class Benchmarking {
         int completedLoops = 0;
 
         long startTime = System.nanoTime();
-        while ((System.nanoTime() - startTime) < maxNanoTime) {
+        while ((System.nanoTime() - startTime) < maxNanoTime
+        && completedLoops <= Integer.MAX_VALUE) {
             clockChecks++;
             for (int i = 0; i < numberOfLoops; i++) {
                 consumer.accept(object);
-                completedLoops++;
+                if (++completedLoops == Integer.MAX_VALUE) {
+                    break;
+                }
             }
         }
         long elapsedRaw = System.nanoTime() - startTime;
-        
-        
+
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
         String id = _getPropertyByName(object, propertyName);
@@ -61,11 +64,29 @@ public class Benchmarking {
             if (isNumber(propertyName)) {
                 return fieldValue;
             } else { 
-                return "N/A";
+                return null;
             }
         } catch (Exception e) {
-            return "N/A";
+            return null;
         }
+    }
+
+    private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethods) {
+        try {
+            String value;
+            if (searchMethods) {            
+                Method method = object.getClass().getMethod(propertyName);
+                method.setAccessible(true);
+                return method.invoke(object).toString();
+            } else {
+                Field field = object.getClass().getDeclaredField(propertyName);
+                field.setAccessible(true);
+                return field.get(object).toString();
+            }
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+
     }
 
     private static boolean isNumber(String toCheck) {
