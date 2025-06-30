@@ -60,7 +60,7 @@ public class Benchmarking {
             String fieldValue = field.get(object).toString();
             if (isNumber(propertyName)) {
                 return fieldValue;
-            } else {
+            } else { 
                 return "N/A";
             }
         } catch (Exception e) {
