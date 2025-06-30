@@ -1,7 +1,6 @@
 package com.slc.tools;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -23,16 +22,16 @@ public class Benchmarking {
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int numberOfLoops, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idSource, String testName)
                                                     throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
-            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod, testName)
+            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, testName)
         );
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int numberOfLoops, 
-                                    String propertyName, boolean idIsMethod, String testName) {
+                                    String propertyName, String testName) {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
@@ -47,26 +46,61 @@ public class Benchmarking {
         }
         long elapsedRaw = System.nanoTime() - startTime;
         
+        
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-        String id = _getPropertyByName(object, propertyName, idIsMethod);
+        String id = _getPropertyByName(object, propertyName);
         return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id, testName);
     }
 
-    private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethods) {
+    private static <T> String _getPropertyByName(T object, String propertyName) {
         try {
-            if (searchMethods) {            
-                Method method = object.getClass().getMethod(propertyName);
-                method.setAccessible(true);
-                return method.invoke(object).toString();
+            Field field = object.getClass().getDeclaredField(propertyName);
+            field.setAccessible(true);
+            String fieldValue = field.get(object).toString();
+            if (isNumber(propertyName)) {
+                return fieldValue;
             } else {
-                Field field = object.getClass().getDeclaredField(propertyName);
-                field.setAccessible(true);
-                return field.get(object).toString();
+                return "N/A";
             }
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
             return "N/A";
         }
+    }
+
+    private static boolean isNumber(String toCheck) {
+        try {
+            Integer.parseInt(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            // do nothing, move on to the next thing
+        }
+        try {
+            Double.parseDouble(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            // do nothing, move on to the next thing
+        }
+        try {
+            Long.parseLong(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            // do nothing, move on to the next thing
+        }
+        try {
+            Short.parseShort(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            // do nothing, move on to the next thing
+        }
+        try {
+            Float.parseFloat(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            // at this point, all number types have been exhausted
+            return false;
+        }
+
     }
 
 }

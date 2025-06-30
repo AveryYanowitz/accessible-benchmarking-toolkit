@@ -41,7 +41,7 @@ public class Demonstration {
         Stream<List<Integer>> listStream = Stream.of(l1, l2, l3, l4);
         
         List<BenchmarkStats> results = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
-                                                Duration.ofMillis(1000), 10, "size", true, "bubbleSort")
+                                                Duration.ofMillis(1000), 10, "size", "bubbleSort")
                                                 .toList();
         for (BenchmarkStats stat : results) {
             System.out.println(stat);
