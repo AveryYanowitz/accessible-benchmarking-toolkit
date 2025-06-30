@@ -29,6 +29,23 @@ public class Benchmarking {
             _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod, testName)
         );
     }
+
+    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Iterable<T> dataToTest,
+                                                    Duration maxDuration, int numberOfLoops, 
+                                                    String idSource, boolean idIsMethod, String testName)
+                                                    throws ReflectiveOperationException {
+        Stream<T> asStream = FormatUtils.toStream(dataToTest);
+        return benchmarkConsumer(methodToTest, asStream, maxDuration, numberOfLoops, idSource, idIsMethod, testName);
+    }
+
+    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, T[] dataToTest,
+                                                    Duration maxDuration, int numberOfLoops, 
+                                                    String idSource, boolean idIsMethod, String testName)
+                                                    throws ReflectiveOperationException {
+        Stream<T> asStream = FormatUtils.toStream(dataToTest);
+        return benchmarkConsumer(methodToTest, asStream, maxDuration, numberOfLoops, idSource, idIsMethod, testName);
+    }
+
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int numberOfLoops, 

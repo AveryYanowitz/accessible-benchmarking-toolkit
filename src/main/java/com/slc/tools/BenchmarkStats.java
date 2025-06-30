@@ -49,7 +49,7 @@ public class BenchmarkStats {
         sb.append("\n");
 
         sb.append("Maximum Duration Set:     ");
-        sb.append(StringUtils.formatDuration(maxDuration));
+        sb.append(FormatUtils.formatDuration(maxDuration));
         sb.append("\n");
 
         sb.append("Total Loops Completed:    ");
@@ -57,7 +57,7 @@ public class BenchmarkStats {
         sb.append("\n");
 
         sb.append("Total Time Elapsed:       ");
-        sb.append(StringUtils.formatDuration(actualTimeElapsed));
+        sb.append(FormatUtils.formatDuration(actualTimeElapsed));
         sb.append("\n");
 
         sb.append("Average Time Per Call:    ");

@@ -1,8 +1,10 @@
 package com.slc.tools;
 
 import java.time.Duration;
+import java.util.stream.Stream;
+import java.util.stream.Stream.Builder;
 
-public class StringUtils {
+public class FormatUtils {
     
     public static String formatFunction(String functionName) {
         StringBuilder sb = new StringBuilder();
@@ -31,4 +33,21 @@ public class StringUtils {
         }
         return numberOnly + secs;
     }
+
+    public static <T> Stream<T> toStream(Iterable<T> iterable) {
+        Builder<T> builder = Stream.builder();
+        for (T item : iterable) {
+            builder.add(item);
+        }
+        return builder.build();
+    }
+
+    public static <T> Stream<T> toStream(T[] arr) {
+        Builder<T> builder = Stream.builder();
+        for (T item : arr) {
+            builder.add(item);
+        }
+        return builder.build();
+    }
+
 }
