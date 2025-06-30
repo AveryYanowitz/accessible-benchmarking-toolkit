@@ -30,7 +30,7 @@ public class BenchmarkStats {
         this.loopsCompleted = loopsCompleted;
         this.actualTimeElapsed = actualTimeElapsed;
 
-        this.averageTimeMillis = loopsCompleted / (double) actualTimeElapsed.toMillis();
+        this.averageTimeMillis = (double) actualTimeElapsed.toMillis() / loopsCompleted;
     }
     
     @Override
