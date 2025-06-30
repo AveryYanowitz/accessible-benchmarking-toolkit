@@ -43,4 +43,6 @@ buildNumber.properties
 hs_err_pid*
 replay_pid*
 
+# my files
 .vscode/settings.json
+src/main/output

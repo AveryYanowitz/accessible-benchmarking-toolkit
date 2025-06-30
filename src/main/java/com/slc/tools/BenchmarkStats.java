@@ -68,34 +68,36 @@ public class BenchmarkStats {
         return sb.toString();
     }
 
-    public static void jsonify(List<BenchmarkStats> results) throws IOException {
-        ObjectMapper om = new ObjectMapper();
-        om.registerModule(new JavaTimeModule());
-        
-        File jsonFile = new File("src/main/resources/results.json");
-        om.enable(SerializationFeature.INDENT_OUTPUT);
-        om.writeValue(jsonFile, results);
+    @SafeVarargs
+    public static void jsonify(List<BenchmarkStats>... results) throws IOException {
+        jsonify(new File("src/output/results.json"), results);
     }
 
-    public static void jsonify(List<BenchmarkStats> results, String fileName) throws IOException {
+    @SafeVarargs
+    public static void jsonify(String fileName, List<BenchmarkStats>... results) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
 
-        StringBuilder filepath = new StringBuilder("src/main/resources/");
+        StringBuilder filepath = new StringBuilder("src/output/");
         filepath.append(fileName);
         if (!fileName.endsWith(".json")) {
             filepath.append(".json");
         }
 
-        om.enable(SerializationFeature.INDENT_OUTPUT);
-        om.writeValue(new File(filepath.toString()), results);
+        jsonify(new File(filepath.toString()), results);
+
     }
     
-    public static void jsonify(List<BenchmarkStats> results, File jsonFile) throws IOException {
+    @SafeVarargs
+    public static void jsonify(File jsonFile, List<BenchmarkStats>... results) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
 
         om.enable(SerializationFeature.INDENT_OUTPUT);
-        om.writeValue(jsonFile, results);
+        for (List<BenchmarkStats> list : results) {
+            om.writeValue(jsonFile, list);
+        }
     }
+
+    private static record JsonWrapper(String testName, List<BenchmarkStats> actualStats) { }
 }

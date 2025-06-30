@@ -47,6 +47,6 @@ public class Demonstration {
         for (BenchmarkStats stat : results) {
             System.out.println(stat);
         }
-        BenchmarkStats.jsonify(results, new File("src/main/resources/testing.json"));
+        BenchmarkStats.jsonify(results);
     }
 }
