@@ -14,16 +14,17 @@ import lombok.Getter;
 @Getter
 public class BenchmarkStats {
 
-    private final String indepVar, testName;
+    private final String testName;
+    private final Double size;
     private final int clockChecks, loopsBetweenChecks, loopsCompleted;
-    private final double averageTimeMillis;
     private final Duration maxDuration, actualTimeElapsed;
+    private final double averageTimeMillis;
 
     public BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
-                    int loopsCompleted, Duration actualTimeElapsed, String indepVar, String testName) {
+                    int loopsCompleted, Duration actualTimeElapsed, Double size, String testName) {
 
         this.testName = testName;
-        this.indepVar = indepVar;
+        this.size = size;
         this.clockChecks = clockChecks;
         this.loopsBetweenChecks = loopsBetweenChecks;
         this.maxDuration = maxDuration;
@@ -36,8 +37,8 @@ public class BenchmarkStats {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Independent Variable:     ");
-        sb.append(indepVar);
+        sb.append("Size:                     ");
+        sb.append(size);
         sb.append("\n\n");
 
         sb.append("Clock Checks:             ");
@@ -71,7 +72,7 @@ public class BenchmarkStats {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
         
-        File jsonFile = new File("src/main/resources/default.json");
+        File jsonFile = new File("src/main/resources/results.json");
         om.enable(SerializationFeature.INDENT_OUTPUT);
         om.writeValue(jsonFile, results);
     }

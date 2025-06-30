@@ -6,7 +6,7 @@ import java.util.stream.Stream.Builder;
 
 public class FormatUtils {
     
-    public static String formatFunction(String functionName) {
+    static String formatFunction(String functionName) {
         StringBuilder sb = new StringBuilder();
         char[] chars = functionName.toCharArray();
         sb.append(Character.toUpperCase(chars[0]));
@@ -24,7 +24,7 @@ public class FormatUtils {
         return sb.toString();
     }
 
-    public static String formatDuration(Duration duration) {
+    static String formatDuration(Duration duration) {
         String fullStr = duration.toString(); // has extra chars we don't want
         String numberOnly = fullStr.substring(2, fullStr.length() - 1);
         String secs = " sec";
@@ -34,7 +34,7 @@ public class FormatUtils {
         return numberOnly + secs;
     }
 
-    public static <T> Stream<T> toStream(Iterable<T> iterable) {
+    static <T> Stream<T> toStream(Iterable<T> iterable) {
         Builder<T> builder = Stream.builder();
         for (T item : iterable) {
             builder.add(item);
@@ -42,7 +42,7 @@ public class FormatUtils {
         return builder.build();
     }
 
-    public static <T> Stream<T> toStream(T[] arr) {
+    static <T> Stream<T> toStream(T[] arr) {
         Builder<T> builder = Stream.builder();
         for (T item : arr) {
             builder.add(item);
