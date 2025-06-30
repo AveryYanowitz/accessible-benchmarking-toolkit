@@ -1,6 +1,5 @@
 package com.slc.tools;
 
-import java.io.File;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +46,6 @@ public class Demonstration {
         for (BenchmarkStats stat : results) {
             System.out.println(stat);
         }
-        BenchmarkStats.jsonify(results);
+        Jsonifier.jsonify(results);
     }
 }
