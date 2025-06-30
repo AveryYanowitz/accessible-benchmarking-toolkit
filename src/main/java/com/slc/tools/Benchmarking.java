@@ -23,16 +23,16 @@ public class Benchmarking {
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int numberOfLoops, 
-                                                    String idSource, String testName)
+                                                    String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
-            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, testName)
+            _singleTest(methodToTest, streamMember, maxDuration, numberOfLoops, idSource, idIsMethod, testName)
         );
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int numberOfLoops, 
-                                    String propertyName, String testName) {
+                                    String propertyName, boolean idIsMethod, String testName) {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
@@ -52,41 +52,26 @@ public class Benchmarking {
 
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-        String id = _getPropertyByName(object, propertyName);
+        String id = _getPropertyByName(object, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, numberOfLoops, maxDuration, completedLoops, elapsedTime, id, testName);
     }
 
-    private static <T> String _getPropertyByName(T object, String propertyName) {
-        try {
-            Field field = object.getClass().getDeclaredField(propertyName);
-            field.setAccessible(true);
-            String fieldValue = field.get(object).toString();
-            if (isNumber(propertyName)) {
-                return fieldValue;
-            } else { 
-                return null;
-            }
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
     private static <T> String _getPropertyByName(T object, String propertyName, boolean searchMethods) {
+        String value;
         try {
-            String value;
             if (searchMethods) {            
                 Method method = object.getClass().getMethod(propertyName);
                 method.setAccessible(true);
-                return method.invoke(object).toString();
+                value = method.invoke(object).toString();
             } else {
                 Field field = object.getClass().getDeclaredField(propertyName);
                 field.setAccessible(true);
-                return field.get(object).toString();
+                value = field.get(object).toString();
             }
         } catch (ReflectiveOperationException e) {
             return null;
         }
-
+        return isNumber(value) ? value : null;
     }
 
     private static boolean isNumber(String toCheck) {

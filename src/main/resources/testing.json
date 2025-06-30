@@ -1,37 +1,37 @@
 [ {
-  "indepVar" : null,
+  "indepVar" : "1000",
   "testName" : "bubbleSort",
-  "clockChecks" : 67,
+  "clockChecks" : 63,
   "loopsBetweenChecks" : 10,
-  "loopsCompleted" : 660,
-  "averageTimeMillis" : 1.5166666666666666,
+  "loopsCompleted" : 620,
+  "averageTimeMillis" : 1.6209677419354838,
   "maxDuration" : 1.000000000,
-  "actualTimeElapsed" : 1.001869833
+  "actualTimeElapsed" : 1.005607584
 }, {
-  "indepVar" : null,
+  "indepVar" : "2000",
   "testName" : "bubbleSort",
   "clockChecks" : 18,
   "loopsBetweenChecks" : 10,
   "loopsCompleted" : 170,
-  "averageTimeMillis" : 6.023529411764706,
+  "averageTimeMillis" : 6.2,
   "maxDuration" : 1.000000000,
-  "actualTimeElapsed" : 1.024341750
+  "actualTimeElapsed" : 1.054486166
 }, {
-  "indepVar" : null,
+  "indepVar" : "4000",
   "testName" : "bubbleSort",
   "clockChecks" : 6,
   "loopsBetweenChecks" : 10,
   "loopsCompleted" : 50,
-  "averageTimeMillis" : 23.66,
+  "averageTimeMillis" : 23.42,
   "maxDuration" : 1.000000000,
-  "actualTimeElapsed" : 1.183925167
+  "actualTimeElapsed" : 1.171756000
 }, {
-  "indepVar" : null,
+  "indepVar" : "8000",
   "testName" : "bubbleSort",
   "clockChecks" : 2,
   "loopsBetweenChecks" : 10,
   "loopsCompleted" : 10,
-  "averageTimeMillis" : 147.9,
+  "averageTimeMillis" : 152.3,
   "maxDuration" : 1.000000000,
-  "actualTimeElapsed" : 1.479692125
+  "actualTimeElapsed" : 1.523329000
 } ]
