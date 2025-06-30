@@ -36,7 +36,7 @@ public class BenchmarkStats {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Independent Variable:                ");
+        sb.append("Independent Variable:     ");
         sb.append(indepVar);
         sb.append("\n\n");
 
@@ -67,6 +67,29 @@ public class BenchmarkStats {
         return sb.toString();
     }
 
+    public static void jsonify(List<BenchmarkStats> results) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+        
+        File jsonFile = new File("src/main/resources/default.json");
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.writeValue(jsonFile, results);
+    }
+
+    public static void jsonify(List<BenchmarkStats> results, String fileName) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+
+        StringBuilder filepath = new StringBuilder("src/main/resources/");
+        filepath.append(fileName);
+        if (!fileName.endsWith(".json")) {
+            filepath.append(".json");
+        }
+
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.writeValue(new File(filepath.toString()), results);
+    }
+    
     public static void jsonify(List<BenchmarkStats> results, File jsonFile) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
