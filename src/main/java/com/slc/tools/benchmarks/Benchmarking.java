@@ -1,7 +1,5 @@
-package com.slc.tools;
+package com.slc.tools.benchmarks;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -21,7 +19,7 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
@@ -42,12 +40,12 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Iterable<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Iterable<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumer(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -62,13 +60,12 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, T[] dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumer(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -89,7 +86,7 @@ public class Benchmarking {
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, dataToTest, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, dataToTest, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -110,7 +107,7 @@ public class Benchmarking {
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -126,14 +123,13 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-
     public static <T, R> Stream<BenchmarkStats> benchmarkFunction(Function<T, R> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
@@ -158,35 +154,8 @@ public class Benchmarking {
 
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-        Double id = _getPropertyByName(object, propertyName, idIsMethod);
+        Double id = FormatUtils.getPropertyByName(object, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
-    }
-
-    private static <T> Double _getPropertyByName(T object, String propertyName, boolean searchMethods) {
-        String value;
-        try {
-            if (searchMethods) {            
-                Method method = object.getClass().getMethod(propertyName);
-                method.setAccessible(true);
-                value = method.invoke(object).toString();
-            } else {
-                Field field = object.getClass().getDeclaredField(propertyName);
-                field.setAccessible(true);
-                value = field.get(object).toString();
-            }
-        } catch (ReflectiveOperationException e) {
-            return null;
-        }
-        return _isNumber(value) ? Double.parseDouble(value) : null;
-    }
-
-    private static boolean _isNumber(String toCheck) {
-        try {
-            Double.parseDouble(toCheck);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
 }

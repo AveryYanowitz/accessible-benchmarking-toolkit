@@ -1,5 +1,7 @@
-package com.slc.tools;
+package com.slc.tools.benchmarks;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -63,4 +65,30 @@ public class FormatUtils {
         return builder.build();
     }
 
+    static <T> Double getPropertyByName(T object, String propertyName, boolean searchMethods) {
+        String value;
+        try {
+            if (searchMethods) {            
+                Method method = object.getClass().getMethod(propertyName);
+                method.setAccessible(true);
+                value = method.invoke(object).toString();
+            } else {
+                Field field = object.getClass().getDeclaredField(propertyName);
+                field.setAccessible(true);
+                value = field.get(object).toString();
+            }
+        } catch (ReflectiveOperationException e) {
+            return null;
+        }
+        return isNumber(value) ? Double.parseDouble(value) : null;
+    }
+
+    static boolean isNumber(String toCheck) {
+        try {
+            Double.parseDouble(toCheck);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 }
