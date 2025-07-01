@@ -74,19 +74,16 @@ public class Demonstration {
     public static void main(String[] args) throws Exception {
         Stream<List<Integer>> listStream = _getIntTestStream(1000, 4, "exponential");
 
-        List<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
+        Stream<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
-                "size", true, "bubbleSort")
-                .toList();
+                "size", true, "bubbleSort");
 
         Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 4, "exponential");
 
-        List<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
+        Stream<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
                 Duration.ofMillis(1000), 10,
-                "size", true, "insertionSort")
-                .toList();
+                "size", true, "insertionSort");
 
-        BenchmarkStats.printStats(results1, results2);
         Jsonifier.jsonify(results1, results2);
     }
 }
