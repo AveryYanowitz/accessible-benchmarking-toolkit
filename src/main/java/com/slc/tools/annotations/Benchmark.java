@@ -9,5 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 
 public @interface Benchmark {
-    
+    public int maxDurationNanos() default 1_000_000_000;
+    public int clockFrequency() default 15;
+    public String idSource() default "size";
+    public boolean idIsMethod() default true;
 }
