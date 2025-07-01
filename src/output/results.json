@@ -2,70 +2,166 @@
   "testName" : "bubbleSort",
   "data" : [ {
     "size" : 1000.0,
-    "clockChecks" : 65,
+    "clockChecks" : 67,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 640,
+    "loopsCompleted" : 660,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.009369958,
-    "averageTimeMillis" : 1.5765625
+    "actualTimeElapsed" : 1.000510000,
+    "averageTimeMillis" : 1.5151515151515151
   }, {
     "size" : 2000.0,
-    "clockChecks" : 18,
+    "clockChecks" : 19,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 170,
+    "loopsCompleted" : 180,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.049630167,
-    "averageTimeMillis" : 6.170588235294118
+    "actualTimeElapsed" : 1.044384333,
+    "averageTimeMillis" : 5.8
+  }, {
+    "size" : 3000.0,
+    "clockChecks" : 9,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 80,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.049344458,
+    "averageTimeMillis" : 13.1125
   }, {
     "size" : 4000.0,
     "clockChecks" : 5,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 40,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.015174708,
-    "averageTimeMillis" : 25.375
+    "actualTimeElapsed" : 1.129076667,
+    "averageTimeMillis" : 28.225
+  }, {
+    "size" : 5000.0,
+    "clockChecks" : 4,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 30,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.130943417,
+    "averageTimeMillis" : 37.666666666666664
+  }, {
+    "size" : 6000.0,
+    "clockChecks" : 3,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 20,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.084404458,
+    "averageTimeMillis" : 54.2
+  }, {
+    "size" : 7000.0,
+    "clockChecks" : 3,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 20,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.526687167,
+    "averageTimeMillis" : 76.3
   }, {
     "size" : 8000.0,
     "clockChecks" : 2,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 10,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.691073833,
-    "averageTimeMillis" : 169.1
+    "actualTimeElapsed" : 1.722101375,
+    "averageTimeMillis" : 172.2
+  }, {
+    "size" : 9000.0,
+    "clockChecks" : 2,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 10,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.330215709,
+    "averageTimeMillis" : 133.0
+  }, {
+    "size" : 10000.0,
+    "clockChecks" : 2,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 10,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.896966250,
+    "averageTimeMillis" : 189.6
   } ]
 }, {
   "testName" : "insertionSort",
   "data" : [ {
     "size" : 1000.0,
-    "clockChecks" : 10847,
+    "clockChecks" : 844,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 108460,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000058834,
-    "averageTimeMillis" : 0.009219988936013277
+    "loopsCompleted" : 8430,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100086125,
+    "averageTimeMillis" : 0.011862396204033215
   }, {
     "size" : 2000.0,
-    "clockChecks" : 4395,
+    "clockChecks" : 522,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 43940,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000176792,
-    "averageTimeMillis" : 0.02275830678197542
+    "loopsCompleted" : 5210,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100108834,
+    "averageTimeMillis" : 0.019193857965451054
+  }, {
+    "size" : 3000.0,
+    "clockChecks" : 353,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 3520,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100079541,
+    "averageTimeMillis" : 0.028409090909090908
   }, {
     "size" : 4000.0,
-    "clockChecks" : 2180,
+    "clockChecks" : 240,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 21790,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000260333,
-    "averageTimeMillis" : 0.04589261128958238
+    "loopsCompleted" : 2390,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100084083,
+    "averageTimeMillis" : 0.04184100418410042
+  }, {
+    "size" : 5000.0,
+    "clockChecks" : 169,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 1680,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100368125,
+    "averageTimeMillis" : 0.05952380952380952
+  }, {
+    "size" : 6000.0,
+    "clockChecks" : 118,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 1170,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100041625,
+    "averageTimeMillis" : 0.08547008547008547
+  }, {
+    "size" : 7000.0,
+    "clockChecks" : 79,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 780,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100334750,
+    "averageTimeMillis" : 0.1282051282051282
   }, {
     "size" : 8000.0,
-    "clockChecks" : 1095,
+    "clockChecks" : 44,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 10940,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000283333,
-    "averageTimeMillis" : 0.09140767824497258
+    "loopsCompleted" : 430,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100505875,
+    "averageTimeMillis" : 0.23255813953488372
+  }, {
+    "size" : 9000.0,
+    "clockChecks" : 10,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 90,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.100161417,
+    "averageTimeMillis" : 1.1111111111111112
+  }, {
+    "size" : 10000.0,
+    "clockChecks" : 2,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 10,
+    "maxDuration" : 0.100000000,
+    "actualTimeElapsed" : 0.115294583,
+    "averageTimeMillis" : 11.5
   } ]
 } ]

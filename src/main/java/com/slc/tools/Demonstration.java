@@ -81,7 +81,7 @@ public class Demonstration {
         Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 10, "linear");
 
         Stream<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
-                Duration.ofMillis(1000), 10,
+                Duration.ofMillis(100), 10,
                 "size", true, "insertionSort");
 
         Jsonifier.jsonify(results1, results2);
