@@ -1,4 +1,4 @@
-package com.slc.tools;
+package com.slc.tools.benchmarks;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

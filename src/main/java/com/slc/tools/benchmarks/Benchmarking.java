@@ -1,4 +1,4 @@
-package com.slc.tools;
+package com.slc.tools.benchmarks;
 
 import java.time.Duration;
 import java.util.function.Consumer;
@@ -19,7 +19,7 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Stream<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
@@ -40,12 +40,12 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, Iterable<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Iterable<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumer(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -60,12 +60,12 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, T[] dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumer(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -86,7 +86,7 @@ public class Benchmarking {
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, dataToTest, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, dataToTest, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -107,7 +107,7 @@ public class Benchmarking {
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
 
     /**
@@ -129,7 +129,7 @@ public class Benchmarking {
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumer(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
     }
     
     private static <T> BenchmarkStats _singleTest(Consumer<T> consumer, T object,  
