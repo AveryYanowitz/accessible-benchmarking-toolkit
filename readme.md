@@ -17,7 +17,7 @@ Download this project, open it, and run "mvn clean install" in the command line.
 ## Features
 
 ### Benchmarking: API
-At the time of writing, there is only a single benchmarking method, `benchmarkConsumer()`. This takes a Consumer<T> and a Stream<T> and runs the Consumer many times for each element of the Stream. It reports the averages in the form of a Stream<BenchmarkStats> (see below). Instead of a Stream, you may also pass an Iterable<T> or its subclasses, or a T[].
+There are two benchmarking methods, `benchmarkConsumer()` and `benchmarkFunction()`. The latter is just a wrapper around the former, which is the core of the API: it takes a Stream<T> and runs the Consumer many times for each element of the Stream. It reports the averages in the form of a Stream<BenchmarkStats> (see below). Instead of a Stream, you may also pass an Iterable<T> or its subclasses, or a T[].
 
 Each benchmark is tagged with the user-specified test name and a size. "Size" does not necessarily have to refer to the size of the object; this is simply the most common intended use-case. To get this value, the function must be provided a property name—which can refer to either a method or a field, indicated by a `true` or `false` value for `idIsMethod`, respectively. If `true`, the program will run the given method on each object and use its return value as the size; otherwise, it will grab the value of the field. If the method or field name is not valid, then the function will return null. **If the resulting value is not a number, "size" will be reported as null.**
 

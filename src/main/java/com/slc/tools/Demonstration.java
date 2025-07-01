@@ -7,7 +7,7 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class Demonstration {
-    public static void bubbleSort(List<Integer> a) {
+    public static boolean bubbleSort(List<Integer> a) {
         for (int i = 0; i < a.size(); i++) {
             for (int j = i; j < a.size(); j++) {
                 if (a.get(i) > a.get(j)) {
@@ -15,6 +15,7 @@ public class Demonstration {
                 }
             }
         }
+        return true;
     }
 
     private static void _swap(List<Integer> a, int i1, int i2) {
