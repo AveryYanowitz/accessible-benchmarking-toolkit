@@ -31,6 +31,7 @@ buildNumber.properties
 .mtj.tmp/
 
 # Package Files #
+*.json
 *.jar
 *.war
 *.nar
@@ -43,4 +44,5 @@ buildNumber.properties
 hs_err_pid*
 replay_pid*
 
+# my files
 .vscode/settings.json
