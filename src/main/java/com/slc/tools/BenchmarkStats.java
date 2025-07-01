@@ -2,6 +2,7 @@ package com.slc.tools;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.stream.Stream;
 
 import lombok.Getter;
 
@@ -70,4 +71,5 @@ public class BenchmarkStats {
             }
         }
     }
+
 }

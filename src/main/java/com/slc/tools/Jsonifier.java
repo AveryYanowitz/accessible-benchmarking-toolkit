@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -73,6 +75,42 @@ public class Jsonifier {
         
         List<Jsonifier> jsonifiedResults = new ArrayList<>();
         for (List<BenchmarkStats> list : results) {
+            Jsonifier entry = new Jsonifier(list);
+            jsonifiedResults.add(entry);
+        }
+        om.writeValue(jsonFile, jsonifiedResults);
+    }
+
+    @SafeVarargs
+    public static void jsonify(Stream<BenchmarkStats>... results) throws IOException {
+        jsonify(new File("src/output/results.json"), results);
+    }
+
+    @SafeVarargs
+    public static void jsonify(String fileName, Stream<BenchmarkStats>... results) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+
+        StringBuilder filepath = new StringBuilder("src/output/");
+        filepath.append(fileName);
+        if (!fileName.endsWith(".json")) {
+            filepath.append(".json");
+        }
+
+        jsonify(new File(filepath.toString()), results);
+
+    }
+    
+    @SafeVarargs
+    public static void jsonify(File jsonFile, Stream<BenchmarkStats>... results) throws IOException {
+        ObjectMapper om = new ObjectMapper();
+        om.registerModule(new JavaTimeModule());
+        om.enable(SerializationFeature.INDENT_OUTPUT);
+        om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        
+        List<Jsonifier> jsonifiedResults = new ArrayList<>();
+        for (Stream<BenchmarkStats> stream : results) {
+            List<BenchmarkStats> list = stream.collect(Collectors.toList());
             Jsonifier entry = new Jsonifier(list);
             jsonifiedResults.add(entry);
         }

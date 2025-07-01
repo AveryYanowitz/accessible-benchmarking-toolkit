@@ -2,70 +2,70 @@
   "testName" : "bubbleSort",
   "data" : [ {
     "size" : 1000.0,
-    "clockChecks" : 68,
+    "clockChecks" : 65,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 670,
+    "loopsCompleted" : 640,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.007791167,
-    "averageTimeMillis" : 1.5029850746268656
+    "actualTimeElapsed" : 1.009369958,
+    "averageTimeMillis" : 1.5765625
   }, {
     "size" : 2000.0,
-    "clockChecks" : 19,
+    "clockChecks" : 18,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 180,
+    "loopsCompleted" : 170,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.042033875,
-    "averageTimeMillis" : 5.788888888888889
+    "actualTimeElapsed" : 1.049630167,
+    "averageTimeMillis" : 6.170588235294118
   }, {
     "size" : 4000.0,
     "clockChecks" : 5,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 40,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.134660417,
-    "averageTimeMillis" : 28.35
+    "actualTimeElapsed" : 1.015174708,
+    "averageTimeMillis" : 25.375
   }, {
     "size" : 8000.0,
     "clockChecks" : 2,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 10,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.329481917,
-    "averageTimeMillis" : 132.9
+    "actualTimeElapsed" : 1.691073833,
+    "averageTimeMillis" : 169.1
   } ]
 }, {
   "testName" : "insertionSort",
   "data" : [ {
     "size" : 1000.0,
-    "clockChecks" : 9759,
+    "clockChecks" : 10847,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 97580,
+    "loopsCompleted" : 108460,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000025834,
-    "averageTimeMillis" : 0.010248001639680262
+    "actualTimeElapsed" : 1.000058834,
+    "averageTimeMillis" : 0.009219988936013277
   }, {
     "size" : 2000.0,
-    "clockChecks" : 4938,
+    "clockChecks" : 4395,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 49370,
+    "loopsCompleted" : 43940,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000068250,
-    "averageTimeMillis" : 0.020255215718047396
+    "actualTimeElapsed" : 1.000176792,
+    "averageTimeMillis" : 0.02275830678197542
   }, {
     "size" : 4000.0,
-    "clockChecks" : 2460,
+    "clockChecks" : 2180,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 24590,
+    "loopsCompleted" : 21790,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000346875,
-    "averageTimeMillis" : 0.040666937779585195
+    "actualTimeElapsed" : 1.000260333,
+    "averageTimeMillis" : 0.04589261128958238
   }, {
     "size" : 8000.0,
-    "clockChecks" : 1153,
+    "clockChecks" : 1095,
     "loopsBetweenChecks" : 10,
-    "loopsCompleted" : 11520,
+    "loopsCompleted" : 10940,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000279375,
-    "averageTimeMillis" : 0.08680555555555555
+    "actualTimeElapsed" : 1.000283333,
+    "averageTimeMillis" : 0.09140767824497258
   } ]
 } ]
