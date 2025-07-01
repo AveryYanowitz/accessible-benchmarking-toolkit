@@ -53,18 +53,18 @@ public class Demonstration {
     }
 
     /** Generate Streams for testing automatically
-     * @param size minimum size of the lists to generate, list size increases linearly relative to listNUmber
+     * @param minSize minimum size of the lists to generate, list size increases linearly relative to listNUmber
      * @param listNumber number of lists to generate
      * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
      * @return a stream of 
      */
-    private static Stream<List<Integer>> _getIntTestStream(int size, int listNumber, String testGrowth) {
+    private static Stream<List<Integer>> _getIntTestStream(int minSize, int listNumber, String testGrowth) {
         Stream.Builder<List<Integer>> sb = Stream.builder();
         testGrowth = testGrowth.toLowerCase();
         if (testGrowth.equals("linear")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((i) * size));}
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((i) * minSize));}
         } else if (testGrowth.equals("exponential")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * size));}
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * minSize));}
         } else {
             throw new RuntimeException("invalid growth rate: " + testGrowth);
         }
