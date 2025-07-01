@@ -1,10 +1,23 @@
 package com.slc.tools;
 
 import java.time.Duration;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 import java.util.stream.Stream.Builder;
 
 public class FormatUtils {
+
+    /**
+     * Utility function to easily convert Functions into Consumers
+     * @param <T> The input type of the Consumer
+     * @param <R>The return type of the original function
+     * @param functionToConvert The function that you 
+     * @return
+     */
+    public static <T, R> Consumer<T> toConsumer(Function<T,R> functionToConvert) {
+        return ((T input) -> functionToConvert.apply(input));
+    }
     
     static String formatFunction(String functionName) {
         StringBuilder sb = new StringBuilder();
