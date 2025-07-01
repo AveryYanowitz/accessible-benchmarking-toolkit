@@ -53,18 +53,18 @@ public class Demonstration {
     }
 
     /** Generate Streams for testing automatically
-     * @param size minimum size of the lists to generate, list size increases linearly relative to listNUmber
+     * @param minSize minimum size of the lists to generate, list size increases linearly relative to listNUmber
      * @param listNumber number of lists to generate
      * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
      * @return a stream of 
      */
-    private static Stream<List<Integer>> _getIntTestStream(int size, int listNumber, String testGrowth) {
+    private static Stream<List<Integer>> _getIntTestStream(int minSize, int listNumber, String testGrowth) {
         Stream.Builder<List<Integer>> sb = Stream.builder();
         testGrowth = testGrowth.toLowerCase();
         if (testGrowth.equals("linear")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((i) * size));}
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 + i) * minSize));}
         } else if (testGrowth.equals("exponential")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * size));}
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * minSize));}
         } else {
             throw new RuntimeException("invalid growth rate: " + testGrowth);
         }
@@ -72,13 +72,13 @@ public class Demonstration {
     }
 
     public static void main(String[] args) throws Exception {
-        Stream<List<Integer>> listStream = _getIntTestStream(1000, 4, "exponential");
+        Stream<List<Integer>> listStream = _getIntTestStream(1000, 10, "linear");
 
         Stream<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
                 "size", true, "bubbleSort");
 
-        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 4, "exponential");
+        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 10, "linear");
 
         Stream<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
                 Duration.ofMillis(1000), 10,
