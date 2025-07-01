@@ -29,11 +29,12 @@ public class Demonstration {
         }
     }
 
-    // Assume arr is sorted through the highestSortedIndex; returns the index of insertion
+    // Assume arr is sorted through the highestSortedIndex; returns the index of
+    // insertion
     private static void _insertIntoSorted(List<Integer> arr, int highestSortedIndex, int n) {
         for (int i = highestSortedIndex; i > 0; i--) {
             if (n < arr.get(i - 1)) {
-                arr.set(i, arr.get(i-1));
+                arr.set(i, arr.get(i - 1));
             } else {
                 arr.set(i, n);
                 return;
@@ -51,30 +52,41 @@ public class Demonstration {
         return list;
     }
 
+    /** Generate Streams for testing automatically
+     * @param size minimum size of the lists to generate, list size increases linearly relative to listNUmber
+     * @param listNumber number of lists to generate
+     * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
+     * @return a stream of 
+     */
+    private static Stream<List<Integer>> _getIntTestStream(int size, int listNumber, String testGrowth) {
+        Stream.Builder<List<Integer>> sb = Stream.builder();
+        testGrowth = testGrowth.toLowerCase();
+        if (testGrowth.equals("linear")) {
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((i) * size));}
+        } else if (testGrowth.equals("exponential")) {
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * size));}
+        } else {
+            throw new RuntimeException("invalid growth rate: " + testGrowth);
+        }
+        return sb.build();
+    }
+
     public static void main(String[] args) throws Exception {
-        List<Integer> l1 = _getRandom(1000);
-        List<Integer> l2 = _getRandom(2000);
-        List<Integer> l3 = _getRandom(4000);
-        List<Integer> l4 = _getRandom(8000);
-        Stream<List<Integer>> listStream = Stream.of(l1, l2, l3, l4);
-        
+        Stream<List<Integer>> listStream = _getIntTestStream(1000, 4, "exponential");
+
         List<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
-                                                Duration.ofMillis(1000), 10, 
-                                                "size", true, "bubbleSort")
-                                                .toList();
-        
-        List<Integer> l5 = _getRandom(1000);
-        List<Integer> l6 = _getRandom(2000);
-        List<Integer> l7 = _getRandom(4000);
-        List<Integer> l8 = _getRandom(8000);
-        Stream<List<Integer>> listStream2 = Stream.of(l5, l6, l7, l8);
-        
+                Duration.ofMillis(1000), 10,
+                "size", true, "bubbleSort")
+                .toList();
+
+        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 4, "exponential");
+
         List<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
-                                                Duration.ofMillis(1000), 10, 
-                                                "size", true, "insertionSort")
-                                                .toList();
-        
-        BenchmarkStats.printStats(results1, results2);                                        
+                Duration.ofMillis(1000), 10,
+                "size", true, "insertionSort")
+                .toList();
+
+        BenchmarkStats.printStats(results1, results2);
         Jsonifier.jsonify(results1, results2);
     }
 }
