@@ -62,7 +62,7 @@ public class Demonstration {
         Stream.Builder<List<Integer>> sb = Stream.builder();
         testGrowth = testGrowth.toLowerCase();
         if (testGrowth.equals("linear")) {
-            for (int i = 1; i < listNumber + 1; i++) {sb.add(_getRandom((i) * minSize));}
+            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 + i) * minSize));}
         } else if (testGrowth.equals("exponential")) {
             for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * minSize));}
         } else {
