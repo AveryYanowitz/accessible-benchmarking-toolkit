@@ -16,22 +16,13 @@ import lombok.Getter;
 
 @Getter
 public class Jsonifier {
-    
-    @Getter
-    private static class DataField {
-        final Double size;
-        final int clockChecks, loopsBetweenChecks, loopsCompleted;
-        final Duration maxDuration, actualTimeElapsed;
-        final double averageTimeMillis;
 
-        DataField(BenchmarkStats baseStats) {
-            size = baseStats.getSize();
-            clockChecks = baseStats.getClockChecks();
-            loopsBetweenChecks = baseStats.getLoopsBetweenChecks();
-            loopsCompleted = baseStats.getLoopsCompleted();
-            maxDuration = baseStats.getMaxDuration();
-            actualTimeElapsed = baseStats.getActualTimeElapsed();
-            averageTimeMillis = baseStats.getAverageTimeMillis();
+    private static record DataField(Double size, int clockChecks, int loopsBetweenChecks, int loopsCompleted,
+                                    Duration maxDuration, Duration actualTimeElapsed, double averageTimeMillis) {
+        public DataField(BenchmarkStats baseStats) {
+            this(baseStats.getSize(), baseStats.getClockChecks(), baseStats.getLoopsBetweenChecks(),
+            baseStats.getLoopsCompleted(), baseStats.getMaxDuration(), baseStats.getActualTimeElapsed(),
+            baseStats.getAverageTimeMillis());
         }
     }
 
