@@ -68,13 +68,15 @@ public class Jsonifier {
     public static void jsonify(File jsonFile, List<BenchmarkStats>... results) throws IOException {
         ObjectMapper om = new ObjectMapper();
         om.registerModule(new JavaTimeModule());
-
         om.enable(SerializationFeature.INDENT_OUTPUT);
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        
+        List<Jsonifier> jsonifiedResults = new ArrayList<>();
         for (List<BenchmarkStats> list : results) {
             Jsonifier entry = new Jsonifier(list);
-            om.writeValue(jsonFile, entry);
+            jsonifiedResults.add(entry);
         }
+        om.writeValue(jsonFile, jsonifiedResults);
     }
 
 }

@@ -1,6 +1,7 @@
 package com.slc.tools;
 
 import java.time.Duration;
+import java.util.List;
 
 import lombok.Getter;
 
@@ -26,7 +27,7 @@ public class BenchmarkStats {
 
         this.averageTimeMillis = (double) actualTimeElapsed.toMillis() / loopsCompleted;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -59,5 +60,14 @@ public class BenchmarkStats {
         sb.append(" ms \n");
 
         return sb.toString();
+    }
+
+    @SafeVarargs
+    public static void printStats(List<BenchmarkStats>... results) {
+        for (List<BenchmarkStats> result : results) {
+            for (BenchmarkStats stats : result) {
+                System.out.println(stats);
+            }
+        }
     }
 }

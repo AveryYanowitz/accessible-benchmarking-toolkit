@@ -1,4 +1,4 @@
-{
+[ {
   "testName" : "bubbleSort",
   "data" : [ {
     "size" : 1000.0,
@@ -6,31 +6,66 @@
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 670,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.006325042,
-    "averageTimeMillis" : 1.501492537313433
+    "actualTimeElapsed" : 1.007791167,
+    "averageTimeMillis" : 1.5029850746268656
   }, {
     "size" : 2000.0,
     "clockChecks" : 19,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 180,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.041944791,
-    "averageTimeMillis" : 5.783333333333333
+    "actualTimeElapsed" : 1.042033875,
+    "averageTimeMillis" : 5.788888888888889
   }, {
     "size" : 4000.0,
     "clockChecks" : 5,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 40,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.129847917,
-    "averageTimeMillis" : 28.225
+    "actualTimeElapsed" : 1.134660417,
+    "averageTimeMillis" : 28.35
   }, {
     "size" : 8000.0,
     "clockChecks" : 2,
     "loopsBetweenChecks" : 10,
     "loopsCompleted" : 10,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.317385917,
-    "averageTimeMillis" : 131.7
+    "actualTimeElapsed" : 1.329481917,
+    "averageTimeMillis" : 132.9
   } ]
-}
+}, {
+  "testName" : "insertionSort",
+  "data" : [ {
+    "size" : 1000.0,
+    "clockChecks" : 9759,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 97580,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.000025834,
+    "averageTimeMillis" : 0.010248001639680262
+  }, {
+    "size" : 2000.0,
+    "clockChecks" : 4938,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 49370,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.000068250,
+    "averageTimeMillis" : 0.020255215718047396
+  }, {
+    "size" : 4000.0,
+    "clockChecks" : 2460,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 24590,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.000346875,
+    "averageTimeMillis" : 0.040666937779585195
+  }, {
+    "size" : 8000.0,
+    "clockChecks" : 1153,
+    "loopsBetweenChecks" : 10,
+    "loopsCompleted" : 11520,
+    "maxDuration" : 1.000000000,
+    "actualTimeElapsed" : 1.000279375,
+    "averageTimeMillis" : 0.08680555555555555
+  } ]
+} ]

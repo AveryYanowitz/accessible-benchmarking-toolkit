@@ -111,10 +111,10 @@ public class Benchmarking {
         } catch (ReflectiveOperationException e) {
             return null;
         }
-        return isNumber(value) ? Double.parseDouble(value) : null;
+        return _isNumber(value) ? Double.parseDouble(value) : null;
     }
 
-    private static boolean isNumber(String toCheck) {
+    private static boolean _isNumber(String toCheck) {
         try {
             Double.parseDouble(toCheck);
             return true;
