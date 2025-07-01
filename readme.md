@@ -6,7 +6,7 @@ This library allows Java programmers to benchmark their code at the function lev
 
 (Requires Maven.)
 
-Download this project, open it, and run "mvn clean install" in the command line. This will add the project to your local Maven repository. Then, in the projects you want to use it with, add the following text to your pom.xml file under \<dependencies\>:
+Download this project, open it, and run "mvn clean install" in the command line. If this generates errors reading "method get____() not found," install the VSCode or VSCodium Project Lombok extension and run the command again. This will add the project to your local Maven repository. Then, in the projects you want to use it with, add the following text to your pom.xml file under \<dependencies\>:
 
     <groupId>com.slc.tools</groupId>
     <artifactId>benchmarking-tools</artifactId>
