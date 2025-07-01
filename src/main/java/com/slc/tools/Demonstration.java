@@ -74,7 +74,7 @@ public class Demonstration {
 
     public static void main(String[] args) throws Exception {
         Stream<List<Integer>> listStream = _getIntTestStream(1000, 10, "linear");
-
+        
         Stream<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
                 "size", true, "bubbleSort");

@@ -1,7 +1,5 @@
 package com.slc.tools;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -62,7 +60,6 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-
     public static <T> Stream<BenchmarkStats> benchmarkConsumer(Consumer<T> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
@@ -126,7 +123,6 @@ public class Benchmarking {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-
     public static <T, R> Stream<BenchmarkStats> benchmarkFunction(Function<T, R> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
@@ -158,35 +154,8 @@ public class Benchmarking {
 
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-        Double id = _getPropertyByName(object, propertyName, idIsMethod);
+        Double id = FormatUtils.getPropertyByName(object, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
-    }
-
-    private static <T> Double _getPropertyByName(T object, String propertyName, boolean searchMethods) {
-        String value;
-        try {
-            if (searchMethods) {            
-                Method method = object.getClass().getMethod(propertyName);
-                method.setAccessible(true);
-                value = method.invoke(object).toString();
-            } else {
-                Field field = object.getClass().getDeclaredField(propertyName);
-                field.setAccessible(true);
-                value = field.get(object).toString();
-            }
-        } catch (ReflectiveOperationException e) {
-            return null;
-        }
-        return _isNumber(value) ? Double.parseDouble(value) : null;
-    }
-
-    private static boolean _isNumber(String toCheck) {
-        try {
-            Double.parseDouble(toCheck);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
 }
