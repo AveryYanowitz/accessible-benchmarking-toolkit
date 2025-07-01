@@ -33,6 +33,6 @@ As previously mentioned, the `benchmarkConsumer()` method returns a Stream of Be
 
 (Note: `size` is stored as a Double object rather than a double primitive because it can be `null`, as described above.)
 
-BenchmarkStats also provides a method called `jsonify`, which uses the Jackson library to save a Stream<BenchmarkStats> to a JSON file. When running `jsonify`, the user can optionally specify a file name or full file path; if not, the default location is `src/main/resources`, and the default file name is `results.json`. 
+There is also a Jsonifier class which offers a few `jsonify` methods. These make use of the Jackson library to save Lists of BenchmarkStats. You can optionally specify a file name or full file path; if not, the default location is `src/main/output`, and the default file name is `results.json`.
 
 **WARNING: If you run JSONify multiple times with the same file name (or with default parameters), it will overwrite previous saves.**
