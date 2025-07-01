@@ -62,7 +62,7 @@ public class Demonstration {
         Stream.Builder<List<Integer>> sb = Stream.builder();
         testGrowth = testGrowth.toLowerCase();
         if (testGrowth.equals("linear")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((i) * minSize));}
+            for (int i = 1; i < listNumber + 1; i++) {sb.add(_getRandom((i) * minSize));}
         } else if (testGrowth.equals("exponential")) {
             for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * minSize));}
         } else {
@@ -72,13 +72,13 @@ public class Demonstration {
     }
 
     public static void main(String[] args) throws Exception {
-        Stream<List<Integer>> listStream = _getIntTestStream(1000, 4, "exponential");
+        Stream<List<Integer>> listStream = _getIntTestStream(1000, 10, "linear");
 
         Stream<BenchmarkStats> results1 = Benchmarking.benchmarkConsumer(Demonstration::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
                 "size", true, "bubbleSort");
 
-        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 4, "exponential");
+        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 10, "linear");
 
         Stream<BenchmarkStats> results2 = Benchmarking.benchmarkConsumer(Demonstration::insertionSort, listStream2,
                 Duration.ofMillis(1000), 10,
