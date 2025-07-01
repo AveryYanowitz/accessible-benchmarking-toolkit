@@ -13,7 +13,7 @@ public class FormatUtils {
      * @param <T> The input type of the Consumer
      * @param <R>The return type of the original function
      * @param functionToConvert The function that you 
-     * @return
+     * @return A Consumer wrapper around the provided function
      */
     public static <T, R> Consumer<T> toConsumer(Function<T,R> functionToConvert) {
         return ((T input) -> functionToConvert.apply(input));
