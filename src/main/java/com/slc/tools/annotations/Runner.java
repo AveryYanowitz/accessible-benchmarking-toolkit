@@ -15,15 +15,15 @@ import com.slc.tools.benchmarks.Jsonifier;
 
 
 public class Runner {
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<T> classWithBenchmarks, Stream<T> dataToTest) throws ReflectiveOperationException, IOException {
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws ReflectiveOperationException, IOException {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
         for (Method method : methodsToTest) {
             Benchmark benchmark = method.getAnnotation(Benchmark.class);
-            Duration maxDuration = Duration.ofNanos(benchmark.maxDurationNanos());
+            Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
             String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
 
-            Stream<BenchmarkStats> results = benchmarkMethod(method, dataToTest, maxDuration, benchmark.clockFrequency(),
+            Stream<BenchmarkStats> results = benchmarkMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
                                                 benchmark.idName(), benchmark.idIsMethod(), testName);
 
             OutputType output = benchmark.outputTo();            

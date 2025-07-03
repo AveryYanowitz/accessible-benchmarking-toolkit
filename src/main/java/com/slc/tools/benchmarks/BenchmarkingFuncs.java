@@ -154,6 +154,7 @@ public class BenchmarkingFuncs {
                 try {
                     return _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
                 } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
                     return null;
                 }
             }

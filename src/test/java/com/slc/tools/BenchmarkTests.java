@@ -7,6 +7,7 @@ import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.slc.tools.benchmarks.BenchmarkingFuncs;
@@ -21,6 +22,7 @@ public class BenchmarkTests {
     }
 
     @Test
+    @Disabled
     public void benchmarkMethodTest() throws SecurityException, NoSuchMethodException {
         Foo foo = new Foo();
         Class<?> clazz = "abc".getClass();

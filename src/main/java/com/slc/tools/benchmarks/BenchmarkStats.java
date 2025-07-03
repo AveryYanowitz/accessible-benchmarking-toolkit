@@ -53,4 +53,14 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
         }
     }
 
+    /**
+     * Primarily for unit testing
+     * @return whether all fields are defined and greater than zero
+     */
+    public boolean isComplete() {
+        return clockChecks > 0 && loopsBetweenChecks > 0 && maxDuration != null
+                        && loopsCompleted > 0 && actualTimeElapsed != null && size != null
+                        && size > 0 && testName != null;
+    }
+
 }

@@ -1,37 +1,49 @@
 package com.slc.tools;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.junit.jupiter.api.Test;
 
 import com.slc.tools.annotations.Benchmark;
+import com.slc.tools.annotations.OutputType;
 import com.slc.tools.annotations.Runner;
+import com.slc.tools.benchmarks.BenchmarkStats;
 
 public class AnnotationTests {
 
-    private static class BenchmarkHolder {
-        @Benchmark
-        public static void correctBenchmark() { }
+    public static class BenchmarkHolder {
+        @Benchmark(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
+        idName = "intValue", idIsMethod = true)
+        public static void emptyBenchmark(int x) { }
+
+        @Benchmark(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
+        idName = "intValue", idIsMethod = true)
+        public static int realBenchmark(int x) {
+            return x*x;
+        }
 
         @Benchmark
         public void incorrectBenchmark() { }
         
-        @SuppressWarnings("unused")
         public void notABenchmark() { }
     }
 
     @Test
     public void annotatedFetchTest() throws NoSuchMethodException {
-        BenchmarkHolder benchmarkHolder = new BenchmarkHolder();
-        Method correct = benchmarkHolder.getClass().getDeclaredMethod("correctBenchmark");
-        Method incorrect = benchmarkHolder.getClass().getDeclaredMethod("incorrectBenchmark");
-        Method notAnnotated = benchmarkHolder.getClass().getDeclaredMethod("notABenchmark");
+        Method correct = BenchmarkHolder.class.getDeclaredMethod("emptyBenchmark", int.class);
+        Method incorrect = BenchmarkHolder.class.getDeclaredMethod("incorrectBenchmark");
+        Method notAnnotated = BenchmarkHolder.class.getDeclaredMethod("notABenchmark");
 
-        List<Method> shouldOnlyBeBenchmarks = Runner.getBenchmarks(benchmarkHolder.getClass());
+        List<Method> shouldOnlyBeBenchmarks = Runner.getBenchmarks(BenchmarkHolder.class);
         assertTrue(shouldOnlyBeBenchmarks.contains(correct));
         assertFalse(shouldOnlyBeBenchmarks.contains(incorrect));
         assertFalse(shouldOnlyBeBenchmarks.contains(notAnnotated));
@@ -39,7 +51,32 @@ public class AnnotationTests {
 
     @Test
     public void runnerTest() {
+        Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        List<Integer> randomInts = randomIntList(4);
+        List<BenchmarkStats> results;
 
+        try {
+            results = Runner.runBenchmarks(clazz, randomInts);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail(e.getMessage());
+            return;
+        }
+
+        assertEquals(8, results.size());
+        for (BenchmarkStats result : results) {
+            assertNotNull(result);
+            assertTrue(result.isComplete());
+        }
+    }
+
+    private static List<Integer> randomIntList(int len) {
+        Random random = new Random();
+        List<Integer> list = new ArrayList<>();
+        for (int i = 0; i < len; i++) {
+            list.add(random.nextInt(15));
+        }
+        return list;
     }
 
 }
