@@ -6,32 +6,31 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-
 import org.junit.jupiter.api.Test;
 
-import com.slc.tools.annotations.Benchmark;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import com.slc.tools.annotations.Benchmarkable;
 import com.slc.tools.annotations.OutputType;
 import com.slc.tools.annotations.Runner;
 import com.slc.tools.benchmarks.BenchmarkStats;
+import com.slc.tools.examples.ExampleClass;
 
 public class AnnotationTests {
 
     public static class BenchmarkHolder {
-        @Benchmark(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
+        @Benchmarkable(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
         idName = "intValue", idIsMethod = true)
         public static void emptyBenchmark(int x) { }
 
-        @Benchmark(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
+        @Benchmarkable(nanoTime = 1_000_000, outputTo = OutputType.RETURN,
         idName = "intValue", idIsMethod = true)
         public static int realBenchmark(int x) {
             return x*x;
         }
 
-        @Benchmark
+        @Benchmarkable
         public void incorrectBenchmark() { }
         
         public void notABenchmark() { }
@@ -52,7 +51,7 @@ public class AnnotationTests {
     @Test
     public void runnerTest() {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
-        List<Integer> randomInts = randomIntList(4);
+        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         List<BenchmarkStats> results;
 
         try {
@@ -69,14 +68,4 @@ public class AnnotationTests {
             assertTrue(result.isComplete());
         }
     }
-
-    private static List<Integer> randomIntList(int len) {
-        Random random = new Random();
-        List<Integer> list = new ArrayList<>();
-        for (int i = 0; i < len; i++) {
-            list.add(random.nextInt(15));
-        }
-        return list;
-    }
-
 }

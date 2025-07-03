@@ -60,7 +60,7 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
     public boolean isComplete() {
         return clockChecks > 0 && loopsBetweenChecks > 0 && maxDuration != null
                         && loopsCompleted > 0 && actualTimeElapsed != null && size != null
-                        && size > 0 && testName != null;
+                        && testName != null;
     }
 
 }

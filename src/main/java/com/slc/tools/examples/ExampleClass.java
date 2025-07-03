@@ -1,14 +1,16 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.examples;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
-public class Demonstration {
+import com.slc.tools.annotations.Benchmarkable;
+import com.slc.tools.annotations.OutputType;
 
+public class ExampleClass {
 
+    @Benchmarkable(outputTo = OutputType.PRINT, testName = "Bubble Sort")
     public static boolean bubbleSort(List<Integer> a) {
         for (int i = 0; i < a.size(); i++) {
             for (int j = i; j < a.size(); j++) {
@@ -26,6 +28,7 @@ public class Demonstration {
         a.set(i2, placeholder);
     }
 
+    @Benchmarkable(outputTo = OutputType.PRINT, testName = "Insertion Sort")
     public static void insertionSort(List<Integer> arrToSort) {
         for (int i = 1; i < arrToSort.size(); i++) {
             _insertIntoSorted(arrToSort, i, arrToSort.get(i));
@@ -46,7 +49,30 @@ public class Demonstration {
         arr.set(0, n);
     }
 
-    private static List<Integer> _getRandom(int size) {
+    /** Generate Streams for testing automatically
+     * @param minSize minimum size of the lists to generate, list size increases linearly relative to listNUmber
+     * @param listNumber number of lists to generate
+     * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
+     * @return a stream of 
+     */
+    public static Stream<List<Integer>> getRandomIntStream(int minSize, int listNumber, String testGrowth) {
+        Stream.Builder<List<Integer>> sb = Stream.builder();
+        testGrowth = testGrowth.toLowerCase();
+        if (testGrowth.equals("linear")) {
+            for (int i = 0; i < listNumber; i++) {
+                sb.add(getRandomIntList((1 + i) * minSize));
+            }
+        } else if (testGrowth.equals("exponential")) {
+            for (int i = 0; i < listNumber; i++) {
+                sb.add(getRandomIntList((1 << i) * minSize));
+            }
+        } else {
+            throw new RuntimeException("invalid growth rate: " + testGrowth);
+        }
+        return sb.build();
+    }
+
+    public static List<Integer> getRandomIntList(int size) {
         List<Integer> list = new ArrayList<>();
         Random random = new Random();
         for (int i = 0; i < size; i++) {
@@ -55,38 +81,6 @@ public class Demonstration {
         return list;
     }
 
-    /** Generate Streams for testing automatically
-     * @param minSize minimum size of the lists to generate, list size increases linearly relative to listNUmber
-     * @param listNumber number of lists to generate
-     * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
-     * @return a stream of 
-     */
-    private static Stream<List<Integer>> _getIntTestStream(int minSize, int listNumber, String testGrowth) {
-        Stream.Builder<List<Integer>> sb = Stream.builder();
-        testGrowth = testGrowth.toLowerCase();
-        if (testGrowth.equals("linear")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 + i) * minSize));}
-        } else if (testGrowth.equals("exponential")) {
-            for (int i = 0; i < listNumber; i++) {sb.add(_getRandom((1 << i) * minSize));}
-        } else {
-            throw new RuntimeException("invalid growth rate: " + testGrowth);
-        }
-        return sb.build();
-    }
 
-    public static void main(String[] args) throws Exception {
-        Stream<List<Integer>> listStream = _getIntTestStream(1000, 10, "linear");
-        
-        Stream<BenchmarkStats> results1 = BenchmarkingFuncs.benchmarkConsumable(Demonstration::bubbleSort, listStream,
-                Duration.ofMillis(1000), 10,
-                "size", true, "bubbleSort");
 
-        Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 10, "linear");
-
-        Stream<BenchmarkStats> results2 = BenchmarkingFuncs.benchmarkConsumable(Demonstration::insertionSort, listStream2,
-                Duration.ofMillis(100), 10,
-                "size", true, "insertionSort");
-
-        Jsonifier.jsonify(results1, results2);
-    }
 }

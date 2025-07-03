@@ -19,7 +19,7 @@ public class Runner {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
         for (Method method : methodsToTest) {
-            Benchmark benchmark = method.getAnnotation(Benchmark.class);
+            Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
             Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
             String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
 
@@ -42,7 +42,7 @@ public class Runner {
         Method[] classMethods = clazz.getDeclaredMethods();
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
-            if (method.isAnnotationPresent(Benchmark.class)
+            if (method.isAnnotationPresent(Benchmarkable.class)
             && Modifier.isStatic(method.getModifiers())) {
                 annotatedMethods.add(method);
             }
