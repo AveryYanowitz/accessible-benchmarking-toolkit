@@ -1,5 +1,6 @@
 package com.slc.tools;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.Method;
@@ -9,6 +10,7 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 
 import com.slc.tools.benchmarks.BenchmarkingFuncs;
+import com.slc.tools.benchmarks.BenchmarkStats;
 
 public class BenchmarkTests {
     
@@ -26,7 +28,12 @@ public class BenchmarkTests {
         Stream<String> dataToTest = Stream.of("lorem", "ipsum", "dolor", "sit", "amet");
 
         try {
-            BenchmarkingFuncs.benchmarkMethod(method, dataToTest, Duration.ofSeconds(1), 15, "length", true, "length test");
+            Stream<BenchmarkStats> results = BenchmarkingFuncs.benchmarkMethod(method, dataToTest, 
+                                        Duration.ofSeconds(1), 15, 
+                                        "length", true, "length test");
+            results.forEach((BenchmarkStats result) -> {
+                assertNotNull(result);
+            });
         } catch (ReflectiveOperationException e) {
             fail(e.getMessage());
         }
