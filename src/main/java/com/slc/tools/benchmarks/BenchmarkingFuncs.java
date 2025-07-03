@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Stream;
 
-public class Benchmarking {
+public class BenchmarkingFuncs {
 
     /**
      * Takes a Stream of objects and time-tests each of them, returning a new Stream of the results.

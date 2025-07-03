@@ -20,8 +20,8 @@ public class Jsonifier {
     private static record DataField(Double size, int clockChecks, int loopsBetweenChecks, int loopsCompleted,
                                     Duration maxDuration, Duration actualTimeElapsed, double averageTimeMillis) {
         public DataField(BenchmarkStats baseStats) {
-            this(baseStats.getSize(), baseStats.getClockChecks(), baseStats.getLoopsBetweenChecks(),
-            baseStats.getLoopsCompleted(), baseStats.getMaxDuration(), baseStats.getActualTimeElapsed(),
+            this(baseStats.size(), baseStats.clockChecks(), baseStats.loopsBetweenChecks(),
+            baseStats.loopsCompleted(), baseStats.maxDuration(), baseStats.actualTimeElapsed(),
             baseStats.getAverageTimeMillis());
         }
     }
@@ -30,7 +30,7 @@ public class Jsonifier {
     public final List<DataField> data;
 
     private Jsonifier(List<BenchmarkStats> underlyingStats) {
-        testName = underlyingStats.get(0).getTestName();
+        testName = underlyingStats.get(0).testName();
         data = new ArrayList<>();
         for (BenchmarkStats stats : underlyingStats) {
             data.add(new DataField(stats));

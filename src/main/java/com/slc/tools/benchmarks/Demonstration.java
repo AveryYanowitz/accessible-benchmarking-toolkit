@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.stream.Stream;
 
 public class Demonstration {
+
+
     public static boolean bubbleSort(List<Integer> a) {
         for (int i = 0; i < a.size(); i++) {
             for (int j = i; j < a.size(); j++) {
@@ -75,13 +77,13 @@ public class Demonstration {
     public static void main(String[] args) throws Exception {
         Stream<List<Integer>> listStream = _getIntTestStream(1000, 10, "linear");
         
-        Stream<BenchmarkStats> results1 = Benchmarking.benchmarkConsumable(Demonstration::bubbleSort, listStream,
+        Stream<BenchmarkStats> results1 = BenchmarkingFuncs.benchmarkConsumable(Demonstration::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
                 "size", true, "bubbleSort");
 
         Stream<List<Integer>> listStream2 = _getIntTestStream(1000, 10, "linear");
 
-        Stream<BenchmarkStats> results2 = Benchmarking.benchmarkConsumable(Demonstration::insertionSort, listStream2,
+        Stream<BenchmarkStats> results2 = BenchmarkingFuncs.benchmarkConsumable(Demonstration::insertionSort, listStream2,
                 Duration.ofMillis(100), 10,
                 "size", true, "insertionSort");
 

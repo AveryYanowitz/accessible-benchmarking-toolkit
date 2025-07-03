@@ -3,29 +3,11 @@ package com.slc.tools.benchmarks;
 import java.time.Duration;
 import java.util.List;
 
-import lombok.Getter;
-
-@Getter
-public class BenchmarkStats {
-
-    private final String testName;
-    private final Double size;
-    private final int clockChecks, loopsBetweenChecks, loopsCompleted;
-    private final Duration maxDuration, actualTimeElapsed;
-    private final double averageTimeMillis;
-
-    public BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
+public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
                     int loopsCompleted, Duration actualTimeElapsed, Double size, String testName) {
 
-        this.testName = testName;
-        this.size = size;
-        this.clockChecks = clockChecks;
-        this.loopsBetweenChecks = loopsBetweenChecks;
-        this.maxDuration = maxDuration;
-        this.loopsCompleted = loopsCompleted;
-        this.actualTimeElapsed = actualTimeElapsed;
-
-        this.averageTimeMillis = (double) actualTimeElapsed.toMillis() / loopsCompleted;
+    public double getAverageTimeMillis() {
+        return (double) actualTimeElapsed.toMillis() / loopsCompleted;
     }
 
     @Override
@@ -56,7 +38,7 @@ public class BenchmarkStats {
         sb.append("\n");
 
         sb.append("Average Time Per Call:    ");
-        sb.append(averageTimeMillis);
+        sb.append(getAverageTimeMillis());
         sb.append(" ms \n");
 
         return sb.toString();
