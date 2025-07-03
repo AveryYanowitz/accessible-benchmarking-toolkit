@@ -15,17 +15,17 @@ public class BenchmarkingFuncs {
      * @param dataToTest A Stream of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between tests
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
-            _singleConsumerTest(methodToTest, streamMember, maxDuration, clockFrequency, idSource, idIsMethod, testName)
+            _singleConsumerTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName)
         );
     }
 
@@ -36,17 +36,17 @@ public class BenchmarkingFuncs {
      * @param dataToTest An Iterable of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between tests
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, Iterable<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
 
     /**
@@ -56,17 +56,17 @@ public class BenchmarkingFuncs {
      * @param dataToTest An array of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between clock checks
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T> Stream<BenchmarkStats> benchmarkConsumable(Consumer<T> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
-        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(methodToTest, asStream, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
 
     /**
@@ -77,17 +77,17 @@ public class BenchmarkingFuncs {
      * @param dataToTest A Stream of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between tests
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T, R> Stream<BenchmarkStats> benchmarkFunction(Function<T, R> methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumable(asConsumer, dataToTest, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, dataToTest, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
 
     /**
@@ -97,18 +97,18 @@ public class BenchmarkingFuncs {
      * @param methodToTest An algorithm to test
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between tests
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T, R> Stream<BenchmarkStats> benchmarkFunction(Function<T, R> methodToTest, Iterable<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
 
     /**
@@ -119,18 +119,18 @@ public class BenchmarkingFuncs {
      * @param dataToTest An array of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between clock checks
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T, R> Stream<BenchmarkStats> benchmarkFunction(Function<T, R> methodToTest, T[] dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         Stream<T> asStream = FormatUtils.toStream(dataToTest);
         Consumer<T> asConsumer = FormatUtils.toConsumer(methodToTest);
-        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+        return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
     
     /**
@@ -140,19 +140,19 @@ public class BenchmarkingFuncs {
      * @param dataToTest A Stream of objects which will be passed to the provided method
      * @param maxDuration The longest time any test should run
      * @param clockFrequency The number of loops to run between tests
-     * @param idSource The field or method name from which to derive the run ID
-     * @param idIsMethod True if idSource names a method, false if it names a field
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
     public static <T> Stream<BenchmarkStats> benchmarkMethod(Method methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idSource, boolean idIsMethod, String testName)
+                                                    String idName, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {
         return dataToTest.map((T streamMember) -> 
             {
                 try {
-                    return _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idSource, idIsMethod, testName);
+                    return _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
                 } catch (ReflectiveOperationException e) {
                     return null;
                 }

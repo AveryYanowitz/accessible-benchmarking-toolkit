@@ -32,4 +32,9 @@ public class AnnotationTests {
         assertFalse(shouldOnlyBeBenchmarks.contains(notAnnotated));
     }
 
+    @Test
+    public void runnerTest() {
+        
+    }
+
 }

@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 public @interface Benchmark {
     public int maxDurationNanos() default 1_000_000_000;
     public int clockFrequency() default 15;
-    public String idSource() default "size";
+    public String idName() default "size";
+    public String testName() default "";
     public boolean idIsMethod() default true;
+    public OutputType outputTo() default OutputType.JSON;
 }
