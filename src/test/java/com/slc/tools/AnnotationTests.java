@@ -1,12 +1,10 @@
 package com.slc.tools;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +22,7 @@ public class AnnotationTests {
     }
 
     @Test
-    public void benchmarkFetchTest() throws NoSuchMethodException {
+    public void annotatedFetchTest() throws NoSuchMethodException {
         BenchmarkHolder benchmarkHolder = new BenchmarkHolder();
         Method annotated = benchmarkHolder.getClass().getDeclaredMethod("isABenchmark");
         Method notAnnotated = benchmarkHolder.getClass().getDeclaredMethod("isNotABenchmark");

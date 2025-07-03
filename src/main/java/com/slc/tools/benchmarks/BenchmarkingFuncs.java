@@ -145,7 +145,7 @@ public class BenchmarkingFuncs {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkMethod(Method methodToTest, Object instance, Stream<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkMethod(Method methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idSource, boolean idIsMethod, String testName)
                                                     throws ReflectiveOperationException {

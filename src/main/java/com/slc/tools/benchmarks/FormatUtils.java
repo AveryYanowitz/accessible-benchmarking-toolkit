@@ -1,7 +1,6 @@
 package com.slc.tools.benchmarks;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
