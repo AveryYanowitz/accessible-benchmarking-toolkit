@@ -10,8 +10,8 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import com.slc.tools.benchmarks.BenchmarkingFuncs;
 import com.slc.tools.benchmarks.BenchmarkStats;
+import com.slc.tools.benchmarks.BenchmarkingFuncs;
 
 public class BenchmarkTests {
     

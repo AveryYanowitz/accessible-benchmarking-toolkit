@@ -15,6 +15,16 @@ import com.slc.tools.benchmarks.Jsonifier;
 
 
 public class Runner {
+
+    /**
+     * Runs all of the `@Benchmarkable` methods written in a given class.
+     * @param <T> The type of data the Benchmarkable methods take as input
+     * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
+     * @param dataToTest A list of data to run the benchmark methods on
+     * @return The results of methods with OutputType.RETURN; may be empty
+     * @throws ReflectiveOperationException
+     * @throws IOException
+     */
     public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws ReflectiveOperationException, IOException {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
