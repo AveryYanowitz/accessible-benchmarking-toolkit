@@ -1,6 +1,7 @@
 package com.slc.tools.benchmarks;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.Duration;
 import java.util.function.Consumer;
@@ -19,16 +20,6 @@ public class FormatUtils {
      */
     public static <T, R> Consumer<T> toConsumer(Function<T,R> functionToConvert) {
         return ((T input) -> functionToConvert.apply(input));
-    }
-
-    public static <T> Consumer<T> toConsumer(Method methodToConvert) {
-        return (T input) -> {
-            try {
-                methodToConvert.invoke(input);
-            } catch (Exception e) {
-                throw new IllegalArgumentException(e.getMessage());
-            }
-        };
     }
     
     static String formatFunction(String functionName) {
