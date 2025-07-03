@@ -15,26 +15,31 @@ public class AnnotationTests {
 
     private static class BenchmarkHolder {
         @Benchmark
-        public void isABenchmark() { }
+        public static void correctBenchmark() { }
+
+        @Benchmark
+        public void incorrectBenchmark() { }
         
         @SuppressWarnings("unused")
-        public void isNotABenchmark() { }
+        public void notABenchmark() { }
     }
 
     @Test
     public void annotatedFetchTest() throws NoSuchMethodException {
         BenchmarkHolder benchmarkHolder = new BenchmarkHolder();
-        Method annotated = benchmarkHolder.getClass().getDeclaredMethod("isABenchmark");
-        Method notAnnotated = benchmarkHolder.getClass().getDeclaredMethod("isNotABenchmark");
+        Method correct = benchmarkHolder.getClass().getDeclaredMethod("correctBenchmark");
+        Method incorrect = benchmarkHolder.getClass().getDeclaredMethod("incorrectBenchmark");
+        Method notAnnotated = benchmarkHolder.getClass().getDeclaredMethod("notABenchmark");
 
         List<Method> shouldOnlyBeBenchmarks = Runner.getBenchmarks(benchmarkHolder.getClass());
-        assertTrue(shouldOnlyBeBenchmarks.contains(annotated));
+        assertTrue(shouldOnlyBeBenchmarks.contains(correct));
+        assertFalse(shouldOnlyBeBenchmarks.contains(incorrect));
         assertFalse(shouldOnlyBeBenchmarks.contains(notAnnotated));
     }
 
     @Test
     public void runnerTest() {
-        
+
     }
 
 }

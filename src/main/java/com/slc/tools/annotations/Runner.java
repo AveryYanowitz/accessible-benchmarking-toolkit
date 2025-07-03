@@ -4,6 +4,7 @@ import static com.slc.tools.benchmarks.BenchmarkingFuncs.benchmarkMethod;
 
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,8 @@ public class Runner {
         Method[] classMethods = clazz.getDeclaredMethods();
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
-            if (method.isAnnotationPresent(Benchmark.class)) {
+            if (method.isAnnotationPresent(Benchmark.class)
+            && Modifier.isStatic(method.getModifiers())) {
                 annotatedMethods.add(method);
             }
         }
