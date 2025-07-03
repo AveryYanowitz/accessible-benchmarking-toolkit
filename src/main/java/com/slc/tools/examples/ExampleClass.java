@@ -10,7 +10,7 @@ import com.slc.tools.annotations.OutputType;
 
 public class ExampleClass {
 
-    @Benchmarkable(outputTo = OutputType.PRINT, testName = "Bubble Sort")
+    @Benchmarkable(outputTo = OutputType.JSON, testName = "Bubble Sort")
     public static boolean bubbleSort(List<Integer> a) {
         for (int i = 0; i < a.size(); i++) {
             for (int j = i; j < a.size(); j++) {
@@ -21,19 +21,19 @@ public class ExampleClass {
         }
         return true;
     }
-
-    private static void _swap(List<Integer> a, int i1, int i2) {
-        int placeholder = a.get(i1);
-        a.set(i1, a.get(i2));
-        a.set(i2, placeholder);
-    }
-
-    @Benchmarkable(outputTo = OutputType.PRINT, testName = "Insertion Sort")
+    
+    @Benchmarkable(outputTo = OutputType.JSON, testName = "Insertion Sort")
     public static void insertionSort(List<Integer> arrToSort) {
         for (int i = 1; i < arrToSort.size(); i++) {
             _insertIntoSorted(arrToSort, i, arrToSort.get(i));
         }
     }
+
+    private static void _swap(List<Integer> a, int i1, int i2) {
+        int placeholder = a.get(i1);
+        a.set(i1, a.get(i2));
+        a.set(i2, placeholder);
+    }    
 
     // Assume arr is sorted through the highestSortedIndex; returns the index of
     // insertion

@@ -28,7 +28,9 @@ public class Runner {
     public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws ReflectiveOperationException, IOException {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
+        Jsonifier jsonifier = new Jsonifier();
         for (Method method : methodsToTest) {
+            System.out.println(method);
             Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
             Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
             String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
@@ -45,10 +47,13 @@ public class Runner {
                 System.out.println("------");
                 System.out.println("------");
             } else if (output == OutputType.JSON) {
-                Jsonifier.jsonify(results);
+                jsonifier.addToJson(results);
             } else {
                 results.forEach(resultsList::add);
             }
+        }
+        if (jsonifier.size() > 0) {
+            jsonifier.jsonify();
         }
         return resultsList;
     }

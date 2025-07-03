@@ -11,7 +11,7 @@ public @interface Benchmarkable {
     public int nanoTime() default 1_000_000_000;
     public int clockFrequency() default 15;
     public String idName() default "size";
-    public String testName() default "";
     public boolean idIsMethod() default true;
+    public String testName() default "";
     public OutputType outputTo() default OutputType.JSON;
 }

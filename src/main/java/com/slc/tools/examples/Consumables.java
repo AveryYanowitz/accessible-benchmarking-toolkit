@@ -22,6 +22,7 @@ public class Consumables {
                 Duration.ofMillis(100), 10,
                 "size", true, "insertionSort");
 
-        Jsonifier.jsonify(results1, results2);
+        Jsonifier jsonifier = new Jsonifier(results1, results2);
+        jsonifier.jsonify();
     }
 }
