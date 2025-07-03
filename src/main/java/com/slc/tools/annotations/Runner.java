@@ -28,7 +28,12 @@ public class Runner {
 
             OutputType output = benchmark.outputTo();            
             if (output == OutputType.PRINT) {
-                results.forEach(System.out::println);
+                results.forEach((result) -> {
+                    System.out.println(result);
+                    System.out.println("------");
+                });
+                System.out.println("------");
+                System.out.println("------");
             } else if (output == OutputType.JSON) {
                 Jsonifier.jsonify(results);
             } else {
