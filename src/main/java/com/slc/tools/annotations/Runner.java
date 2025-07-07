@@ -1,8 +1,10 @@
 package com.slc.tools.annotations;
 
-import static com.slc.tools.benchmarks.BenchmarkingFuncs.benchmarkMethod;
+import static com.slc.tools.benchmarks.BenchmarkingFuncs.benchmarkInstanceMethod;
+import static com.slc.tools.benchmarks.BenchmarkingFuncs.benchmarkStaticMethod;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
@@ -22,9 +24,12 @@ public class Runner {
      * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
      * @param dataToTest A list of data to run the benchmark methods on
      * @return The results of methods with OutputType.RETURN; may be empty
+     * @throws IOException
+     * @throws IllegalArgumentException
+     * @throws ReflectiveOperationException
      */
     public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) 
-                                                            throws IOException, IllegalArgumentException {
+                                                            throws IOException, IllegalArgumentException, ReflectiveOperationException {
         BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
         if (classAnno != null) {
             return runBenchmarks(classWithBenchmarks, dataToTest, classAnno.outputTo());
@@ -40,9 +45,14 @@ public class Runner {
      * @param dataToTest A list of data to run the benchmark methods on
      * @param outputOverride Overrides a specified OutputType in classWithBenchmarks
      * @return The results of methods with OutputType.RETURN; may be empty
+     * @throws SecurityException 
+     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException 
+     * @throws IllegalAccessException 
+     * @throws InstantiationException 
      */
     public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest, OutputType outputOverride) 
-                                                        throws IOException, IllegalArgumentException {
+                                                        throws IOException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException {
         OutputType outputTo = outputOverride;
         String savePath;
         BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
@@ -56,12 +66,21 @@ public class Runner {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
         for (Method method : methodsToTest) {
+            boolean isStatic = Modifier.isStatic(method.getModifiers());
+
             Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
             Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
             String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
 
-            Stream<BenchmarkStats> results = benchmarkMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
-                                                benchmark.idName(), benchmark.idIsMethod(), testName);
+            Stream<BenchmarkStats> results;
+            if (isStatic) {
+              results = benchmarkStaticMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
+                                                benchmark.idName(), benchmark.idIsMethod(), testName);  
+            } else {
+                Object target = method.getDeclaringClass().getConstructor().newInstance();
+                results = benchmarkInstanceMethod(method, target, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
+                                                benchmark.idName(), benchmark.idIsMethod(), testName);  
+            }
 
             if (outputTo == OutputType.PRINT) {
                 results.forEach((result) -> {
@@ -87,7 +106,6 @@ public class Runner {
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
             if (method.isAnnotationPresent(Benchmarkable.class)
-            && Modifier.isStatic(method.getModifiers())
             && method.canAccess(null)) {
                 annotatedMethods.add(method);
             }

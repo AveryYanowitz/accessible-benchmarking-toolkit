@@ -45,6 +45,12 @@
             <version>2.19.1</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.private.library</groupId>
+            <artifactId>stack-queue</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!-- support for "Java 8 date time api" -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>

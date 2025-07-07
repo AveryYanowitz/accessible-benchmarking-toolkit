@@ -8,11 +8,15 @@ This library allows Java programmers to benchmark their code at the function lev
 
 Download this project, open it, and run "mvn clean install" in the command line. If this generates errors reading "method get____() not found," install the VSCode or VSCodium Project Lombok extension and run the command again. This will add the project to your local Maven repository. Then, in the projects you want to use it with, add the following text to your pom.xml file under \<dependencies\>:
 
-    <groupId>com.slc.tools</groupId>
-    <artifactId>benchmarking-tools</artifactId>
-    <version>1.1.2</version>
+    <dependency>
+        <groupId>com.slc.tools</groupId>
+        <artifactId>benchmarking-tools</artifactId>
+        <version>1.1.2</version>
+    </dependency>
 
 (You may need to update the version number.) From there, you can import and call all of the classes and functions provided in the library.
+
+**Disclaimer: This project relies on Ema Sestakova's stack/queue implementation. I downloaded it, changed the group and artifact IDs, and ran `mvn install` on it. I'm not sure whether this will work on someone else's computer. Please let me know if not!**
 
 ## `benchmarks` Package
 ### Consumers and Functions

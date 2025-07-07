@@ -145,14 +145,14 @@ public class BenchmarkingFuncs {
      * @param testName The name of the method being tested
      * @return A new Stream containing the results of the tests in the order provided
      */
-    public static <T> Stream<BenchmarkStats> benchmarkMethod(Method methodToTest, Stream<T> dataToTest,
+    public static <T> Stream<BenchmarkStats> benchmarkStaticMethod(Method methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
                                                     String idName, boolean idIsMethod, String testName) {
         return dataToTest.map((T streamMember) -> 
             {
                 BenchmarkStats mapResult;
                 try {
-                    mapResult = _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
+                    mapResult = _singleMethodTest(methodToTest, null, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();
                     mapResult = null;
@@ -160,7 +160,24 @@ public class BenchmarkingFuncs {
                 return mapResult;
             }
         );
-    }    
+    }
+
+    public static <T> Stream<BenchmarkStats> benchmarkInstanceMethod(Method methodToTest, Object target, Stream<T> dataToTest,
+                                                    Duration maxDuration, int clockFrequency,
+                                                    String idName, boolean idIsMethod, String testName) {
+        return dataToTest.map((T streamMember) -> 
+            {
+                BenchmarkStats mapResult;
+                try {
+                    mapResult = _singleMethodTest(methodToTest, target, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
+                } catch (ReflectiveOperationException e) {
+                    e.printStackTrace();
+                    mapResult = null;
+                }
+                return mapResult;
+            }
+        );
+    }
     
     private static <T> BenchmarkStats _singleConsumerTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int clockFrequency, 
@@ -188,7 +205,7 @@ public class BenchmarkingFuncs {
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
     }
 
-    private static <T> BenchmarkStats _singleMethodTest(Method method, T input,  
+    private static <T> BenchmarkStats _singleMethodTest(Method method, Object target, T input,  
                                     Duration maxDuration, int clockFrequency, 
                                     String propertyName, boolean idIsMethod, String testName) 
                                     throws ReflectiveOperationException {
@@ -201,7 +218,7 @@ public class BenchmarkingFuncs {
                     && completedLoops <= Integer.MAX_VALUE) {
             clockChecks++;
             for (int i = 0; i < clockFrequency; i++) {
-                method.invoke(null, input);
+                method.invoke(target, input);
                 if (++completedLoops == Integer.MAX_VALUE) {
                     break;
                 }                    

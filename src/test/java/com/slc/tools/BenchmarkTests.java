@@ -28,7 +28,7 @@ public class BenchmarkTests {
         Method method = foo.getClass().getDeclaredMethod("bar", clazz);
         Stream<String> dataToTest = Stream.of("lorem", "ipsum", "dolor", "sit", "amet");
 
-        Stream<BenchmarkStats> results = BenchmarkingFuncs.benchmarkMethod(method, dataToTest, 
+        Stream<BenchmarkStats> results = BenchmarkingFuncs.benchmarkStaticMethod(method, dataToTest, 
                                     Duration.ofSeconds(1), 15, 
                                     "length", true, "length test");
         results.forEach((BenchmarkStats result) -> {
