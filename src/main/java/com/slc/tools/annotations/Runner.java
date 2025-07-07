@@ -23,12 +23,39 @@ public class Runner {
      * @param dataToTest A list of data to run the benchmark methods on
      * @return The results of methods with OutputType.RETURN; may be empty
      */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws IOException {
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) 
+                                                            throws IOException, IllegalArgumentException {
+        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
+        if (classAnno != null) {
+            return runBenchmarks(classWithBenchmarks, dataToTest, classAnno.outputTo());
+        } else {
+            return runBenchmarks(classWithBenchmarks, dataToTest, OutputType.JSON);
+        }
+    }
+
+    /**
+     * Runs all of the `@Benchmarkable` methods written in a given class and overrides the class's output type.
+     * @param <T> The type of data the Benchmarkable methods take as input
+     * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
+     * @param dataToTest A list of data to run the benchmark methods on
+     * @param outputOverride Overrides a specified OutputType in classWithBenchmarks
+     * @return The results of methods with OutputType.RETURN; may be empty
+     */
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest, OutputType outputOverride) 
+                                                        throws IOException, IllegalArgumentException {
+        OutputType outputTo = outputOverride;
+        String savePath;
+        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
+        if (classAnno != null) {
+            savePath = classAnno.saveLocation() + "/" + classAnno.fileName();
+        } else {
+            savePath = "src/main/output/results.json";
+        }
+        Jsonifier jsonifier = new Jsonifier(savePath);
+
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
-        Jsonifier jsonifier = new Jsonifier();
         for (Method method : methodsToTest) {
-            System.out.println(method);
             Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
             Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
             String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
@@ -36,15 +63,14 @@ public class Runner {
             Stream<BenchmarkStats> results = benchmarkMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
                                                 benchmark.idName(), benchmark.idIsMethod(), testName);
 
-            OutputType output = benchmark.outputTo();            
-            if (output == OutputType.PRINT) {
+            if (outputTo == OutputType.PRINT) {
                 results.forEach((result) -> {
                     System.out.println(result);
                     System.out.println("------");
                 });
                 System.out.println("------");
                 System.out.println("------");
-            } else if (output == OutputType.JSON) {
+            } else if (outputTo == OutputType.JSON) {
                 jsonifier.addToJson(results);
             } else {
                 results.forEach(resultsList::add);
@@ -68,5 +94,4 @@ public class Runner {
         }
         return annotatedMethods;
     }
-
 }

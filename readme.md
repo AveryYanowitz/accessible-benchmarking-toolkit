@@ -53,12 +53,24 @@ NamelessStats is very similar to BenchmarkStats, except that it lacks the testNa
 **WARNING: If you run JSONify multiple times with the same file name (or with default parameters), it will overwrite previous saves.**
 
 ## `annotations` Package
-### @Benchmarkable and OutputType
-The @Benchmarkable annotation allows you to mark a particular method for benchmarking, and optionally define the benchmark's parameters if they differ from the original.
+### @Benchmarkable
+The @Benchmarkable annotation allows you to mark a particular method for benchmarking, and optionally define the benchmark's parameters if they differ from the original. These parameters are:
 
-Of particular note is the outputTo parameter, whose value is of type OutputType; this tells the program what to do with the Benchmark data once it's been generated. PRINT simply prints it to `System.out`, with no long-term storage; RETURN returns it for use elsewhere in the program; and JSON saves it to JSON file. (For more information on Jsonifying, see section **Results** under `benchmarks`.)
+- **int nanoTime:** The maximum amount of time (in nanoseconds) to run this benchmark for. Defaults to 1 billion (i.e. 1 second).
+- **int clockFrequency:** How many iterations should pass between checking if the maximum time has elapsed; larger values provide more accurate testing at the cost of potentially taking much longer than the expected maximum time. Defaults to 15.
+- **idName:** The field or method to get the "size" property from. Defaults to "size".
+- **idIsMethod:** Whether idName refers to a method, in which case it will be populated by the return value of that method. Defaults to "true".
+- **testName:** A unique identifier for *all* tests performed on this method. Defaults to an empty string.
 
-Methods annotated with this benchmark **must** be static, public, and a member of a public class. If it does not meet all three of these criteria, the benchmark will be skipped.
+Methods with this annotation **must** be static, public, and a member of a public class. If it does not meet all three of these criteria, the benchmark will be skipped.
+
+### @BenchmarkSuite and OutputType
+If you have a class with a series of @Benchmarkable methods, you can mark the class with the @BenchmarkSuite annotation to customize the data reporting process for that class as follows:
+
+- **OutputType outputTo:** What the program should do with the data it generates. `PRINT` simply prints it to `System.out`, with no long-term storage; `RETURN` returns it as a List\<BenchmarkStats> for use elsewhere in the program; and `JSON` saves it to a JSON file. Defaults to `OutputType.JSON`.
+- **String saveLocation:** File path indicating where to save a JSON file; has no effect if using `PRINT` or `RETURN` as output type. Defaults to "src/main/output".
+- **String fileName:** File name for JSON file; has no effect if using `PRINT` or `RETURN` as output type. Defaults to "results.json".
+
 
 ### Runner
 The Runner class, and in particular, the `runBenchmarks()` method, is what allows @Benchmarkable to do its magic. To use it, simply call the method somewhere in your code, providing two arguments: the class containing `@Benchmarkable` methods, and the data you want to benchmark these methods with. Unlike `benchmarkConsumable()` and `benchmarkFunction`, this data must be in a List instead of a Stream. This is because it needs to be read multiple times, once for each method annotated with `@Benchmarkable`.

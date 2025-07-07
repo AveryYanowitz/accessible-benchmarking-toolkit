@@ -53,6 +53,11 @@ public class Jsonifier {
         }
     }
 
+    public Jsonifier(String savePath) {
+        this();
+        setFile(savePath);
+    }
+
     public void addToJson(List<BenchmarkStats> statsToAdd) {
         String testName = statsToAdd.get(0).testName();
         NamelessStats[] data = new NamelessStats[statsToAdd.size()];

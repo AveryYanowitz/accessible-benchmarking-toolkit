@@ -5,12 +5,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Stream;
 
+import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
-import com.slc.tools.annotations.OutputType;
 
+@BenchmarkSuite
 public class ExampleClass {
 
-    @Benchmarkable(outputTo = OutputType.JSON, testName = "Bubble Sort")
+    @Benchmarkable(testName = "Bubble Sort")
     public static boolean bubbleSort(List<Integer> a) {
         for (int i = 0; i < a.size(); i++) {
             for (int j = i; j < a.size(); j++) {
@@ -22,7 +23,7 @@ public class ExampleClass {
         return true;
     }
     
-    @Benchmarkable(outputTo = OutputType.JSON, testName = "Insertion Sort")
+    @Benchmarkable(testName = "Insertion Sort")
     public static void insertionSort(List<Integer> arrToSort) {
         for (int i = 1; i < arrToSort.size(); i++) {
             _insertIntoSorted(arrToSort, i, arrToSort.get(i));

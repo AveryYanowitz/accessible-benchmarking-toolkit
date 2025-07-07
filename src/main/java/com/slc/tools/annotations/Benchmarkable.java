@@ -13,5 +13,4 @@ public @interface Benchmarkable {
     public String idName() default "size";
     public boolean idIsMethod() default true;
     public String testName() default "";
-    public OutputType outputTo() default OutputType.JSON;
 }
