@@ -38,17 +38,17 @@ This class relies on the Jackson library for the file writing. The format is as 
 
     [
         {
-            testName: "name of test 1"
-            data: [ array of {DataField objects} ]
+            testName: "name of test 1",
+            data: [ array of {NamelessStats objects} ]
         },
         {
-            testName: "name of test 2"
-            data: [ array of {DataField objects} ]
+            testName: "name of test 2",
+            data: [ array of {NamelessStats objects} ]
         },
         ...,
     ]
 
-DataField is very similar to BenchmarkStats, except that it lacks the testName field. An array of DataField objects are then stored with a DataPackage, which *does* have a testName, and the Jsonifier stores a list of DataPackages that it writes to the file.
+NamelessStats is very similar to BenchmarkStats, except that it lacks the testName field. An array of NamelessStats objects are then stored with a DataField, which *does* have a testName, and the Jsonifier stores a list of DataPackages that it writes to the file.
 
 **WARNING: If you run JSONify multiple times with the same file name (or with default parameters), it will overwrite previous saves.**
 
@@ -58,7 +58,7 @@ The @Benchmarkable annotation allows you to mark a particular method for benchma
 
 Of particular note is the outputTo parameter, whose value is of type OutputType; this tells the program what to do with the Benchmark data once it's been generated. PRINT simply prints it to `System.out`, with no long-term storage; RETURN returns it for use elsewhere in the program; and JSON saves it to JSON file. (For more information on Jsonifying, see section **Results** under `benchmarks`.)
 
-Methods annotated with this benchmark **must** be static, public, and a member of a public class. If it does not meet all three of these criteria, the benchmark may be skipped, or it may throw a ReflectiveOperationException.
+Methods annotated with this benchmark **must** be static, public, and a member of a public class. If it does not meet all three of these criteria, the benchmark will be skipped.
 
 ### Runner
 The Runner class, and in particular, the `runBenchmarks()` method, is what allows @Benchmarkable to do its magic. To use it, simply call the method somewhere in your code, providing two arguments: the class containing `@Benchmarkable` methods, and the data you want to benchmark these methods with. Unlike `benchmarkConsumable()` and `benchmarkFunction`, this data must be in a List instead of a Stream. This is because it needs to be read multiple times, once for each method annotated with `@Benchmarkable`.

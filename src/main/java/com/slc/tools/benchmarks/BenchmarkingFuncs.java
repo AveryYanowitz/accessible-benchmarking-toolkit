@@ -147,16 +147,17 @@ public class BenchmarkingFuncs {
      */
     public static <T> Stream<BenchmarkStats> benchmarkMethod(Method methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
-                                                    String idName, boolean idIsMethod, String testName)
-                                                    throws ReflectiveOperationException {
+                                                    String idName, boolean idIsMethod, String testName) {
         return dataToTest.map((T streamMember) -> 
             {
+                BenchmarkStats mapResult;
                 try {
-                    return _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
+                    mapResult = _singleMethodTest(methodToTest, streamMember, maxDuration, clockFrequency, idName, idIsMethod, testName);
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();
-                    return null;
+                    mapResult = null;
                 }
+                return mapResult;
             }
         );
     }    
@@ -189,20 +190,21 @@ public class BenchmarkingFuncs {
 
     private static <T> BenchmarkStats _singleMethodTest(Method method, T input,  
                                     Duration maxDuration, int clockFrequency, 
-                                    String propertyName, boolean idIsMethod, String testName) throws ReflectiveOperationException {
+                                    String propertyName, boolean idIsMethod, String testName) 
+                                    throws ReflectiveOperationException {
         long maxNanoTime = maxDuration.toNanos();
         int clockChecks = 0;
         int completedLoops = 0;
 
         long startTime = System.nanoTime();
         while ((System.nanoTime() - startTime) < maxNanoTime
-        && completedLoops <= Integer.MAX_VALUE) {
+                    && completedLoops <= Integer.MAX_VALUE) {
             clockChecks++;
             for (int i = 0; i < clockFrequency; i++) {
                 method.invoke(null, input);
                 if (++completedLoops == Integer.MAX_VALUE) {
                     break;
-                }
+                }                    
             }
         }
         long elapsedRaw = System.nanoTime() - startTime;

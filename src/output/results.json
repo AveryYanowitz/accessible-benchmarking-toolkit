@@ -1,87 +1,44 @@
 [ {
-  "testName" : "Bubble Sort",
+  "testName" : "",
   "data" : [ {
     "size" : 16.0,
-    "clockChecks" : 417848,
+    "clockChecks" : 7833516,
     "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 6267705,
+    "loopsCompleted" : 117502725,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000056959,
-    "averageTimeMillis" : 1.5954803233400423E-4
+    "actualTimeElapsed" : 1.000000125,
+    "averageTimeMillis" : 8.510440928072094E-6
   }, {
     "size" : 32.0,
-    "clockChecks" : 46784,
+    "clockChecks" : 7867963,
     "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 701745,
+    "loopsCompleted" : 118019430,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000013791,
-    "averageTimeMillis" : 0.0014250190596299226
+    "actualTimeElapsed" : 1.000000125,
+    "averageTimeMillis" : 8.473181068574895E-6
   }, {
     "size" : 64.0,
-    "clockChecks" : 11771,
+    "clockChecks" : 7778512,
     "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 176550,
+    "loopsCompleted" : 116677665,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000019959,
-    "averageTimeMillis" : 0.005664117813650524
+    "actualTimeElapsed" : 1.000000084,
+    "averageTimeMillis" : 8.570620606780226E-6
   }, {
     "size" : 128.0,
-    "clockChecks" : 2914,
+    "clockChecks" : 7776932,
     "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 43695,
+    "loopsCompleted" : 116653965,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000059125,
-    "averageTimeMillis" : 0.022885913720105275
+    "actualTimeElapsed" : 1.000000125,
+    "averageTimeMillis" : 8.572361856710142E-6
   }, {
     "size" : 256.0,
-    "clockChecks" : 709,
+    "clockChecks" : 7779353,
     "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 10620,
+    "loopsCompleted" : 116690280,
     "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000740750,
-    "averageTimeMillis" : 0.09416195856873823
-  } ]
-}, {
-  "testName" : "Insertion Sort",
-  "data" : [ {
-    "size" : 16.0,
-    "clockChecks" : 560664,
-    "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 8409945,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000000334,
-    "averageTimeMillis" : 1.1890684184022607E-4
-  }, {
-    "size" : 32.0,
-    "clockChecks" : 314641,
-    "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 4719600,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000001042,
-    "averageTimeMillis" : 2.1188236291211119E-4
-  }, {
-    "size" : 64.0,
-    "clockChecks" : 153942,
-    "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 2309115,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000001917,
-    "averageTimeMillis" : 4.330663479298346E-4
-  }, {
-    "size" : 128.0,
-    "clockChecks" : 74428,
-    "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 1116405,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000009167,
-    "averageTimeMillis" : 8.95732283535097E-4
-  }, {
-    "size" : 256.0,
-    "clockChecks" : 37931,
-    "loopsBetweenChecks" : 15,
-    "loopsCompleted" : 568950,
-    "maxDuration" : 1.000000000,
-    "actualTimeElapsed" : 1.000009375,
-    "averageTimeMillis" : 0.0017576236927673784
+    "actualTimeElapsed" : 1.000000084,
+    "averageTimeMillis" : 8.569694065349744E-6
   } ]
 } ]

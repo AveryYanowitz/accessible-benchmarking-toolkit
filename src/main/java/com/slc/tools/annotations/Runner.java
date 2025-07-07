@@ -22,10 +22,8 @@ public class Runner {
      * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
      * @param dataToTest A list of data to run the benchmark methods on
      * @return The results of methods with OutputType.RETURN; may be empty
-     * @throws ReflectiveOperationException
-     * @throws IOException
      */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws ReflectiveOperationException, IOException {
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) throws IOException {
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
         Jsonifier jsonifier = new Jsonifier();
@@ -63,7 +61,8 @@ public class Runner {
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
             if (method.isAnnotationPresent(Benchmarkable.class)
-            && Modifier.isStatic(method.getModifiers())) {
+            && Modifier.isStatic(method.getModifiers())
+            && method.canAccess(null)) {
                 annotatedMethods.add(method);
             }
         }

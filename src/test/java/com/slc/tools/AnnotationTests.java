@@ -32,8 +32,17 @@ public class AnnotationTests {
 
         @Benchmarkable
         public void incorrectBenchmark() { }
+
+        @Benchmarkable
+        private void privateBenchmark() { } // shouldn't be tested at all
         
         public void notABenchmark() { }
+
+        private static class InnerClass {
+            @Benchmarkable
+            public static void privateInner(int x) { } // also shouldn't be tested
+        }
+
     }
 
     @Test
@@ -48,22 +57,28 @@ public class AnnotationTests {
         assertFalse(shouldOnlyBeBenchmarks.contains(notAnnotated));
     }
 
+
+
     @Test
     public void runnerTest() {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        Class<BenchmarkHolder.InnerClass> privateClazz = BenchmarkHolder.InnerClass.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
-        List<BenchmarkStats> results;
+        List<BenchmarkStats> fullResults;
+        List<BenchmarkStats> emptyResults;
 
         try {
-            results = Runner.runBenchmarks(clazz, randomInts);
+            fullResults = Runner.runBenchmarks(clazz, randomInts);
+            emptyResults = Runner.runBenchmarks(privateClazz, randomInts);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
             return;
         }
 
-        assertEquals(8, results.size());
-        for (BenchmarkStats result : results) {
+        assertEquals(8, fullResults.size());
+        assertEquals(0, emptyResults.size());
+        for (BenchmarkStats result : fullResults) {
             assertNotNull(result);
             assertTrue(result.isComplete());
         }

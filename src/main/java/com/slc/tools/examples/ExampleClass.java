@@ -81,6 +81,4 @@ public class ExampleClass {
         return list;
     }
 
-
-
 }

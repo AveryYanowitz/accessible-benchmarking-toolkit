@@ -17,23 +17,23 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 public class Jsonifier {
 
     /** Copy of BenchmarkStats without testName field, so it can be extracted into the Jsonifier object */
-    private static record DataField(Double size, int clockChecks, int loopsBetweenChecks, int loopsCompleted,
+    private static record NamelessStats(Double size, int clockChecks, int loopsBetweenChecks, int loopsCompleted,
                                     Duration maxDuration, Duration actualTimeElapsed, double averageTimeMillis) {
-        public DataField(BenchmarkStats baseStats) {
+        public NamelessStats(BenchmarkStats baseStats) {
             this(baseStats.size(), baseStats.clockChecks(), baseStats.loopsBetweenChecks(),
             baseStats.loopsCompleted(), baseStats.maxDuration(), baseStats.actualTimeElapsed(),
             baseStats.getAverageTimeMillis());
         }
     }
 
-    /** Packages a list of DataFields with the name of the test they represent */
-    private static record DataPackage(String testName, DataField[] data) {    }
+    /** Packages a list of NamelessStats together with the name of the test they represent */
+    private static record DataField(String testName, NamelessStats[] data) {    }
 
-    private List<DataPackage> dataPackages;
+    private List<DataField> dataFields;
     private File destinationFile;
     
     public Jsonifier() {
-        dataPackages = new ArrayList<>();
+        dataFields = new ArrayList<>();
         destinationFile = new File("src/output/results.json");
     }
 
@@ -55,11 +55,11 @@ public class Jsonifier {
 
     public void addToJson(List<BenchmarkStats> statsToAdd) {
         String testName = statsToAdd.get(0).testName();
-        DataField[] data = new DataField[statsToAdd.size()];
+        NamelessStats[] data = new NamelessStats[statsToAdd.size()];
         for (int i = 0; i < data.length; i++) {
-            data[i] = new DataField(statsToAdd.get(i));
+            data[i] = new NamelessStats(statsToAdd.get(i));
         }
-        dataPackages.add(new DataPackage(testName, data));
+        dataFields.add(new DataField(testName, data));
     }
 
     public void addToJson(BenchmarkStats singleStat) {
@@ -81,7 +81,7 @@ public class Jsonifier {
     }
 
     public int size() {
-        return dataPackages.size();
+        return dataFields.size();
     }
 
     public void jsonify() throws StreamWriteException, DatabindException, IOException {
@@ -89,7 +89,7 @@ public class Jsonifier {
         om.registerModule(new JavaTimeModule());
         om.enable(SerializationFeature.INDENT_OUTPUT);
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        om.writeValue(destinationFile, dataPackages);
+        om.writeValue(destinationFile, dataFields);
     }
 
 }
