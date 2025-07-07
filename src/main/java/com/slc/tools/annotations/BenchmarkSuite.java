@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface BenchmarkSuite {
+    public InitializationFrequency createNewInstance() default InitializationFrequency.NEVER;
     public OutputType outputTo() default OutputType.JSON;
     public String saveLocation() default "src/main/output";
     public String fileName() default "results.json";

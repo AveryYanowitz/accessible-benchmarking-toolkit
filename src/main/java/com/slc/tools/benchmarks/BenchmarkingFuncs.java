@@ -219,9 +219,11 @@ public class BenchmarkingFuncs {
             clockChecks++;
             for (int i = 0; i < clockFrequency; i++) {
                 method.invoke(target, input);
+                // increment completedLoops before asking if max has been reached
+                // to prevent extra loop from being performed and overflowing
                 if (++completedLoops == Integer.MAX_VALUE) {
                     break;
-                }                    
+                }
             }
         }
         long elapsedRaw = System.nanoTime() - startTime;

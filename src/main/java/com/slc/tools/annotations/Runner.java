@@ -45,28 +45,22 @@ public class Runner {
      * @param dataToTest A list of data to run the benchmark methods on
      * @param outputOverride Overrides a specified OutputType in classWithBenchmarks
      * @return The results of methods with OutputType.RETURN; may be empty
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
+     * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
+     * @throws InstantiationException When non-static benchmarks are present, but no zero-args constructor exists or is visible
      */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest, OutputType outputOverride) 
-                                                        throws IOException, IllegalArgumentException, InstantiationException, IllegalAccessException, InvocationTargetException, NoSuchMethodException, SecurityException {
-        OutputType outputTo = outputOverride;
-        String savePath;
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest, OutputType outputTo) 
+                                                        throws IOException, InstantiationException {
         BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
-        if (classAnno != null) {
-            savePath = classAnno.saveLocation() + "/" + classAnno.fileName();
-        } else {
-            savePath = "src/main/output/results.json";
-        }
-        Jsonifier jsonifier = new Jsonifier(savePath);
+        Jsonifier jsonifier = getJsonifier(classWithBenchmarks);
 
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
+        InitializationFrequency whenToInit = classAnno.createNewInstance();
         for (Method method : methodsToTest) {
             boolean isStatic = Modifier.isStatic(method.getModifiers());
+            if (whenToInit == InitializationFrequency.NEVER && !isStatic) {
+                continue;
+            }
 
             Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
             Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
@@ -77,7 +71,17 @@ public class Runner {
               results = benchmarkStaticMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
                                                 benchmark.idName(), benchmark.idIsMethod(), testName);  
             } else {
-                Object target = method.getDeclaringClass().getConstructor().newInstance();
+                Object target;
+                try {
+                    target = method.getDeclaringClass().getConstructor().newInstance();
+                } catch (IllegalArgumentException | NoSuchMethodException | InstantiationException e) {
+                    throw new InstantiationException("No zero-args constructor found for class " + classWithBenchmarks.getSimpleName());
+                } catch (IllegalAccessException | SecurityException | InvocationTargetException e) {
+                    System.out.print("Warning: Unable to instantiate object of type ");
+                    System.out.print(classWithBenchmarks.getSimpleName());
+                    System.out.println("; skipping benchmark");
+                    continue;
+                }
                 results = benchmarkInstanceMethod(method, target, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
                                                 benchmark.idName(), benchmark.idIsMethod(), testName);  
             }
@@ -101,7 +105,7 @@ public class Runner {
         return resultsList;
     }
 
-    public static <T> List<Method> getBenchmarks(Class<T> clazz) {
+    public static List<Method> getBenchmarks(Class<?> clazz) {
         Method[] classMethods = clazz.getDeclaredMethods();
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
@@ -111,5 +115,16 @@ public class Runner {
             }
         }
         return annotatedMethods;
+    }
+
+    public static Jsonifier getJsonifier(Class<?> classWithBenchmarks) {
+        String savePath;
+        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
+        if (classAnno != null) {
+            savePath = classAnno.saveLocation() + "/" + classAnno.fileName();
+        } else {
+            savePath = "src/main/output/results.json";
+        }
+        return new Jsonifier(savePath);
     }
 }
