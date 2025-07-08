@@ -1,4 +1,4 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.slc.tools.annotations.BenchmarkSuite;
 
 /** Jsonifier allows the user to save data in JSON format. */
 public class Jsonifier {
@@ -95,6 +96,17 @@ public class Jsonifier {
         om.enable(SerializationFeature.INDENT_OUTPUT);
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         om.writeValue(destinationFile, dataFields);
+    }
+
+    public static Jsonifier getJsonifier(Class<?> clazz) {
+        String savePath;
+        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
+        if (classAnno != null) {
+            savePath = classAnno.saveLocation() + "/" + classAnno.fileName();
+        } else {
+            savePath = "src/main/output/results.json";
+        }
+        return new Jsonifier(savePath);
     }
 
 }

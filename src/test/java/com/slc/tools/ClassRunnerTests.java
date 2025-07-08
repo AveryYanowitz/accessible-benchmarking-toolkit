@@ -15,21 +15,21 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.slc.tools.annotations.OutputType;
-import com.slc.tools.annotations.Runner;
-import com.slc.tools.benchmarks.BenchmarkStats;
+import com.slc.tools.benchmarks.ClassRunner;
 import com.slc.tools.examples.ExampleClass;
+import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
 import com.slc.tools.utility_classes.ArrListWrapper;
 import com.slc.tools.utility_classes.BenchmarkHolder;
 
 
-public class AnnotationTests {
+public class ClassRunnerTests {
 
     @Test
     public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
-        Runner.runBenchmarks(clazz, randomInts);
+        ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(0, BenchmarkHolder.getInstances()); // all methods are static, so no instances should be created
     }
 
@@ -37,7 +37,7 @@ public class AnnotationTests {
     public void frequencyInit() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
-        Runner.runBenchmarks(clazz, randomInts);
+        ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
     }
 
@@ -45,7 +45,7 @@ public class AnnotationTests {
     public void frequencyMethod() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
-        Runner.runBenchmarks(clazz, randomInts);
+        ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(2, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
         
     }
@@ -57,7 +57,7 @@ public class AnnotationTests {
         List<BenchmarkStats> results;
 
         try {
-            results = Runner.runBenchmarks(clazz, randomInts);
+            results = ClassRunner.runBenchmarks(clazz, randomInts);
         } catch (Exception e) {
             e.printStackTrace();
             fail(e.getMessage());
@@ -82,7 +82,7 @@ public class AnnotationTests {
         String afterText;
         try {
             beforeText = _getJsonText();
-            results = Runner.runBenchmarks(clazz, randomInts, OutputType.JSON);
+            results = ClassRunner.runBenchmarks(clazz, randomInts, OutputType.JSON);
             afterText = _getJsonText();
         } catch (Exception e) {
             fail(e.getMessage());

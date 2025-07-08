@@ -1,4 +1,4 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.util;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -21,7 +21,7 @@ public class FormatUtils {
         return ((T input) -> functionToConvert.apply(input));
     }
     
-    static String formatFunction(String functionName) {
+    public static String formatFunction(String functionName) {
         StringBuilder sb = new StringBuilder();
         char[] chars = functionName.toCharArray();
         sb.append(Character.toUpperCase(chars[0]));
@@ -39,7 +39,7 @@ public class FormatUtils {
         return sb.toString();
     }
 
-    static String formatDuration(Duration duration) {
+    public static String formatDuration(Duration duration) {
         String fullStr = duration.toString(); // has extra chars we don't want
         String numberOnly = fullStr.substring(2, fullStr.length() - 1);
         String secs = " sec";
@@ -49,7 +49,7 @@ public class FormatUtils {
         return numberOnly + secs;
     }
 
-    static <T> Stream<T> toStream(Iterable<T> iterable) {
+    public static <T> Stream<T> toStream(Iterable<T> iterable) {
         Builder<T> builder = Stream.builder();
         for (T item : iterable) {
             builder.add(item);
@@ -57,7 +57,7 @@ public class FormatUtils {
         return builder.build();
     }
 
-    static <T> Stream<T> toStream(T[] arr) {
+    public static <T> Stream<T> toStream(T[] arr) {
         Builder<T> builder = Stream.builder();
         for (T item : arr) {
             builder.add(item);
@@ -65,7 +65,7 @@ public class FormatUtils {
         return builder.build();
     }
 
-    static <T> Double getPropertyByName(T object, String propertyName, boolean searchMethods) {
+    public static <T> Double getPropertyByName(T object, String propertyName, boolean searchMethods) {
         String value;
         try {
             if (searchMethods) {            
@@ -83,7 +83,7 @@ public class FormatUtils {
         return isNumber(value) ? Double.parseDouble(value) : null;
     }
 
-    static boolean isNumber(String toCheck) {
+    public static boolean isNumber(String toCheck) {
         try {
             Double.parseDouble(toCheck);
             return true;
