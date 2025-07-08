@@ -48,42 +48,26 @@ public class Runner {
      * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
      * @throws InstantiationException When non-static benchmarks are present, but no zero-args constructor exists or is visible
      */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest, OutputType outputTo) 
+    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> classWithBenchmarks, List<T> dataToTest, OutputType outputTo) 
                                                         throws IOException, InstantiationException {
         BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
         Jsonifier jsonifier = getJsonifier(classWithBenchmarks);
 
         List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
-        InitializationFrequency whenToInit = classAnno.createNewInstance();
+        Frequency whenToInit = classAnno.createNewInstance();
+        C target = _createNewInstance(classWithBenchmarks);
         for (Method method : methodsToTest) {
-            boolean isStatic = Modifier.isStatic(method.getModifiers());
-            if (whenToInit == InitializationFrequency.NEVER && !isStatic) {
-                continue;
-            }
-
-            Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
-            Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
-            String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
-
             Stream<BenchmarkStats> results;
-            if (isStatic) {
-              results = benchmarkStaticMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
-                                                benchmark.idName(), benchmark.idIsMethod(), testName);  
+            if (Modifier.isStatic(method.getModifiers())) {
+                results = _benchmarkStatic(method, classAnno, dataToTest);
             } else {
-                Object target;
-                try {
-                    target = method.getDeclaringClass().getConstructor().newInstance();
-                } catch (IllegalArgumentException | NoSuchMethodException | InstantiationException e) {
-                    throw new InstantiationException("No zero-args constructor found for class " + classWithBenchmarks.getSimpleName());
-                } catch (IllegalAccessException | SecurityException | InvocationTargetException e) {
-                    System.out.print("Warning: Unable to instantiate object of type ");
-                    System.out.print(classWithBenchmarks.getSimpleName());
-                    System.out.println("; skipping benchmark");
+                if (whenToInit == Frequency.NEVER) {
                     continue;
+                } else if (whenToInit == Frequency.PER_METHOD) {
+                    target = _createNewInstance(classWithBenchmarks);
                 }
-                results = benchmarkInstanceMethod(method, target, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
-                                                benchmark.idName(), benchmark.idIsMethod(), testName);  
+                results = _benchmarkWithTarget(method, classAnno, target, dataToTest);
             }
 
             if (outputTo == OutputType.PRINT) {
@@ -127,4 +111,59 @@ public class Runner {
         }
         return new Jsonifier(savePath);
     }
+
+    private static <T> T _createNewInstance(Class<T> clazz) throws InstantiationException {
+        String className = clazz.getSimpleName();
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (IllegalArgumentException | NoSuchMethodException e) {
+            // Thrown when wrong arguments are passed to constructor, or no such constructor exists;
+            // in this case, it means no zero-args constructor is present and the benchmark was invalid
+            throw new InstantiationException("No zero-args constructor found for class " + className);
+        } catch (IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException e) {
+            // Other errors don't reflect a problem with the benchmarking annotations,
+            // so we won't throw anything, just warn the user
+            System.out.print("Warning: Unable to instantiate object of type ");
+            System.out.print(className);
+            System.out.println("; skipping benchmark");
+            return null;
+        }
+    }
+
+    /**
+     * Benchmark one method, calling it on the same object each time.
+     * @param <C> The class marked with BenchmarkSuite
+     * @param method The method to benchmark
+     * @param classAnno The BenchmarkSuite annotation
+     * @param target The object the method will be called upon
+     * @param dataToTest A list of data to use as parameters for the given method
+     * @return A Stream of BenchmarkStats representing the results of the benchmarking
+     */
+    private static <C> Stream<BenchmarkStats> _benchmarkWithTarget(Method method, BenchmarkSuite classAnno, C target, List<?> dataToTest) {
+        Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
+        Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
+        String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
+
+        return benchmarkInstanceMethod(method, target, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
+                                        benchmark.idName(), benchmark.idIsMethod(), testName);  
+    }
+
+    /**
+     * Benchmark one static method
+     * @param method The method to benchmark
+     * @param classAnno The BenchmarkSuite annotation
+     * @param dataToTest A list of data to use as parameters for the given method
+     * @return A Stream of BenchmarkStats representing the results of the benchmarking
+     */
+    private static Stream<BenchmarkStats> _benchmarkStatic(Method method, BenchmarkSuite classAnno, List<?> dataToTest) {
+        Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
+        Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
+        String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
+        if (!Modifier.isStatic(method.getModifiers())) {
+            throw new IllegalArgumentException("Cannot call _benchmarkStatic on a non-static method");
+        }
+        return benchmarkStaticMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
+                                            benchmark.idName(), benchmark.idIsMethod(), testName);
+    }
+
 }

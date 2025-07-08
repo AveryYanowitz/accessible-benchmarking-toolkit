@@ -8,9 +8,9 @@ package com.slc.tools.annotations;
  * NEVER: Only execute static @Benchmarkable methods from this class
  * 
  */
-public enum InitializationFrequency {
+public enum Frequency {
     ON_INIT,
     PER_METHOD,
-    PER_TEST_CASE,
+    // PER_TEST_CASE, // TODO: not implemented yet
     NEVER,
 }
