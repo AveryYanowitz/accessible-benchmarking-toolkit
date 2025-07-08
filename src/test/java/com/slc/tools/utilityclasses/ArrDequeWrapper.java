@@ -1,4 +1,4 @@
-package com.slc.tools;
+package com.slc.tools.utilityclasses;
 
 import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
@@ -19,5 +19,9 @@ public class ArrDequeWrapper extends ArrayDequeQueue<Integer> {
     @Override
     public void enqueue(Integer element) {
         super.enqueue(element);
+    }
+
+    public static int getInstances() {
+        return numberOfInstancesMade;
     }
 }

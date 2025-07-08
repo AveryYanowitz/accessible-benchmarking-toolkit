@@ -176,8 +176,8 @@ public class Runner {
                                             benchmark.idName(), benchmark.idIsMethod(), testName);
     }
 
+    /** Just used to store the default \@BenchmarkSuite annotation for reference */
     @BenchmarkSuite
-    private static class DefaultSettings {
-    }
+    private static class DefaultSettings {    }
 
 }

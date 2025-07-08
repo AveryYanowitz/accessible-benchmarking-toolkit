@@ -18,6 +18,10 @@ import com.slc.tools.annotations.OutputType;
 import com.slc.tools.annotations.Runner;
 import com.slc.tools.benchmarks.BenchmarkStats;
 import com.slc.tools.examples.ExampleClass;
+import com.slc.tools.utilityclasses.ArrDequeWrapper;
+import com.slc.tools.utilityclasses.ArrListWrapper;
+import com.slc.tools.utilityclasses.BenchmarkHolder;
+
 
 public class AnnotationTests {
 
@@ -26,7 +30,7 @@ public class AnnotationTests {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         Runner.runBenchmarks(clazz, randomInts);
-        assertEquals(0, BenchmarkHolder.numberOfInstancesMade); // all methods are static, so no instances should be created
+        assertEquals(0, BenchmarkHolder.getInstances()); // all methods are static, so no instances should be created
     }
 
     @Test
@@ -34,7 +38,7 @@ public class AnnotationTests {
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         Runner.runBenchmarks(clazz, randomInts);
-        assertEquals(1, ArrDequeWrapper.numberOfInstancesMade); // should only make one instance upon starting the tests
+        assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance upon starting the tests
     }
 
     @Test
@@ -42,7 +46,7 @@ public class AnnotationTests {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         Runner.runBenchmarks(clazz, randomInts);
-        assertEquals(2, ArrListWrapper.numberOfInstancesMade); // all methods are static, so no instances should be created
+        assertEquals(2, ArrListWrapper.getInstances()); // all methods are static, so no instances should be created
         
     }
 

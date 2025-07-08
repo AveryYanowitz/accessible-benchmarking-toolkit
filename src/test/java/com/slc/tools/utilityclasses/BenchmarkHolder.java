@@ -1,4 +1,4 @@
-package com.slc.tools;
+package com.slc.tools.utilityclasses;
 
 import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
@@ -26,5 +26,9 @@ public class BenchmarkHolder {
     private void privateBenchmark() { } // shouldn't be tested at all
     
     public void notABenchmark() { }
+
+    public static int getInstances() {
+        return numberOfInstancesMade;
+    }
 
 }

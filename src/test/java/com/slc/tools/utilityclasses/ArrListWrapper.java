@@ -1,4 +1,4 @@
-package com.slc.tools;
+package com.slc.tools.utilityclasses;
 
 import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
@@ -24,5 +24,9 @@ public class ArrListWrapper extends ArrayListQueue<Integer> {
     @Benchmarkable(nanoTime = 10_000_000)
     public void otherMethod(Integer x) {
         
+    }
+
+    public static int getInstances() {
+        return numberOfInstancesMade;
     }
 }
