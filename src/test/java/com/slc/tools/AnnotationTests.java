@@ -38,7 +38,7 @@ public class AnnotationTests {
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         Runner.runBenchmarks(clazz, randomInts);
-        assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance upon starting the tests
+        assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
     }
 
     @Test
@@ -46,7 +46,7 @@ public class AnnotationTests {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = ExampleClass.getRandomIntList(4);
         Runner.runBenchmarks(clazz, randomInts);
-        assertEquals(2, ArrListWrapper.getInstances()); // all methods are static, so no instances should be created
+        assertEquals(2, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
         
     }
 
@@ -85,7 +85,6 @@ public class AnnotationTests {
             results = Runner.runBenchmarks(clazz, randomInts, OutputType.JSON);
             afterText = _getJsonText();
         } catch (Exception e) {
-            e.printStackTrace();
             fail(e.getMessage());
             return;
         }
