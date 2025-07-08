@@ -7,7 +7,7 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
                     int loopsCompleted, Duration actualTimeElapsed, Double size, String testName) {
 
     public double getAverageTimeMillis() {
-        return (double) actualTimeElapsed.toMillis() / loopsCompleted;
+        return actualTimeElapsed.toMillis() / loopsCompleted;
     }
 
     @Override
@@ -55,7 +55,7 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
 
     /**
      * Primarily for unit testing
-     * @return whether all fields are defined and greater than zero
+     * @return Whether all fields are defined and greater than zero
      */
     public boolean isComplete() {
         return clockChecks > 0 && loopsBetweenChecks > 0 && maxDuration != null

@@ -18,9 +18,9 @@ import com.slc.tools.annotations.OutputType;
 import com.slc.tools.annotations.Runner;
 import com.slc.tools.benchmarks.BenchmarkStats;
 import com.slc.tools.examples.ExampleClass;
-import com.slc.tools.utilityclasses.ArrDequeWrapper;
-import com.slc.tools.utilityclasses.ArrListWrapper;
-import com.slc.tools.utilityclasses.BenchmarkHolder;
+import com.slc.tools.utility_classes.ArrDequeWrapper;
+import com.slc.tools.utility_classes.ArrListWrapper;
+import com.slc.tools.utility_classes.BenchmarkHolder;
 
 
 public class AnnotationTests {

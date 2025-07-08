@@ -134,7 +134,7 @@ public class BenchmarkingFuncs {
     }
     
     /**
-     * Takes a Stream of objects and time-tests each of them, returning a new Stream of the results.
+     * Takes a Stream of objects and time-tests each of them on the provided method, returning a new Stream of the results.
      * @param <T> The type of the object to be tested
      * @param methodToTest An algorithm to test
      * @param dataToTest A Stream of objects which will be passed to the provided method
@@ -143,7 +143,7 @@ public class BenchmarkingFuncs {
      * @param idName The field or method name from which to derive the run ID
      * @param idIsMethod True if idName names a method, false if it names a field
      * @param testName The name of the method being tested
-     * @return A new Stream containing the results of the tests in the order provided
+     * @return A new Stream containing the results of the tests, following the same order as in dataToTest
      */
     public static <T> Stream<BenchmarkStats> benchmarkStaticMethod(Method methodToTest, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency, 
@@ -162,6 +162,19 @@ public class BenchmarkingFuncs {
         );
     }
 
+    /**
+     * Takes a Stream of objects and time-tests each of them on the provided method, returning a new Stream of the results. 
+     * @param <T> The type of the object to be tested
+     * @param methodToTest An algorithm to test
+     * @param target The object on which to invoke methodToTest
+     * @param dataToTest A Stream of objects which will be passed to the provided method
+     * @param maxDuration The longest time any test should run
+     * @param clockFrequency The number of loops to run between tests
+     * @param idName The field or method name from which to derive the run ID
+     * @param idIsMethod True if idName names a method, false if it names a field
+     * @param testName The name of the method being tested
+     * @return A new Stream containing the results of the tests, following the same order as in dataToTest
+     */
     public static <T> Stream<BenchmarkStats> benchmarkInstanceMethod(Method methodToTest, Object target, Stream<T> dataToTest,
                                                     Duration maxDuration, int clockFrequency,
                                                     String idName, boolean idIsMethod, String testName) {
@@ -192,6 +205,8 @@ public class BenchmarkingFuncs {
             clockChecks++;
             for (int i = 0; i < clockFrequency; i++) {
                 consumer.accept(object);
+                // increment completedLoops before asking if max has been reached
+                // to prevent extra loop from being performed and overflowing
                 if (++completedLoops == Integer.MAX_VALUE) {
                     break;
                 }

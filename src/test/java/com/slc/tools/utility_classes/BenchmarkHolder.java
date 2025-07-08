@@ -1,4 +1,4 @@
-package com.slc.tools.utilityclasses;
+package com.slc.tools.utility_classes;
 
 import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
