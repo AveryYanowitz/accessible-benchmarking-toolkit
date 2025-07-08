@@ -10,11 +10,10 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.slc.tools.annotations.BenchmarkSuite;
-import com.slc.tools.annotations.Benchmarkable;
 import com.slc.tools.annotations.OutputType;
 import com.slc.tools.annotations.Runner;
 import com.slc.tools.benchmarks.BenchmarkStats;
@@ -22,29 +21,29 @@ import com.slc.tools.examples.ExampleClass;
 
 public class AnnotationTests {
 
-    @BenchmarkSuite(outputTo = OutputType.RETURN, saveLocation = "src/test/output")
-    public static class BenchmarkHolder {
-        @Benchmarkable(nanoTime = 10_000_000, idName = "intValue", idIsMethod = true)
-        public static void emptyBenchmark(int x) { }
+    @Test
+    public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        Runner.runBenchmarks(clazz, randomInts);
+        assertEquals(0, BenchmarkHolder.numberOfInstancesMade); // all methods are static, so no instances should be created
+    }
 
-        @Benchmarkable(nanoTime = 10_000_000, idName = "intValue", idIsMethod = true)
-        public static int realBenchmark(int x) {
-            return x*x;
-        }
+    @Test
+    public void frequencyInit() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
+        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        Runner.runBenchmarks(clazz, randomInts);
+        assertEquals(1, ArrDequeWrapper.numberOfInstancesMade); // should only make one instance upon starting the tests
+    }
 
-        @Benchmarkable
-        public void incorrectBenchmark() { }
-
-        @Benchmarkable
-        private void privateBenchmark() { } // shouldn't be tested at all
+    @Test
+    public void frequencyMethod() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        Class<ArrListWrapper> clazz = ArrListWrapper.class;
+        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        Runner.runBenchmarks(clazz, randomInts);
+        assertEquals(2, ArrListWrapper.numberOfInstancesMade); // all methods are static, so no instances should be created
         
-        public void notABenchmark() { }
-
-        private static class InnerClass {
-            @Benchmarkable
-            public static void privateInner(int x) { } // also shouldn't be tested
-        }
-
     }
 
     @Test
@@ -67,22 +66,6 @@ public class AnnotationTests {
             assertNotNull(result);
             assertTrue(result.isComplete());
         }
-    }
-
-    @Test
-    public void privateTest() {
-        Class<BenchmarkHolder.InnerClass> privateClazz = BenchmarkHolder.InnerClass.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
-        List<BenchmarkStats> results;
-        try {
-            results = Runner.runBenchmarks(privateClazz, randomInts);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-            return;
-        }
-
-        assertEquals(0, results.size()); // since InnerClass is private, this shouldn't have run anything
     }
 
     @Test

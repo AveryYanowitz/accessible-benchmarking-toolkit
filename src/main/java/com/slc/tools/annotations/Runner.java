@@ -57,16 +57,22 @@ public class Runner {
         Jsonifier jsonifier = getJsonifier(clazz);
 
         List<BenchmarkStats> resultsList = new ArrayList<>();
-        Frequency whenToInit = classAnno.createNewInstance();
-        C target = _createNewInstance(clazz);
+        Frequency whenToInit = classAnno.whenToInstantiate();
+        C target = null; // make sure it's init'd
+        if (whenToInit == Frequency.ON_INIT) {
+            target = _createNewInstance(clazz);
+        }
+        
         for (Method method : _benchmarkableMethods(clazz)) {
+            System.out.println(clazz.getSimpleName() + " " + method.getName());
             Stream<BenchmarkStats> results;
             if (Modifier.isStatic(method.getModifiers())) {
                 results = _benchmarkStatic(method, classAnno, dataToTest);
             } else {
                 if (whenToInit == Frequency.NEVER) {
-                    continue;
-                } else if (whenToInit == Frequency.PER_METHOD) {
+                    continue; // can't test non-static methods if we're not allowd to make an instance
+                }
+                if (whenToInit == Frequency.PER_METHOD) {
                     target = _createNewInstance(clazz);
                 }
                 results = _benchmarkWithTarget(method, classAnno, target, dataToTest);
@@ -93,17 +99,12 @@ public class Runner {
 
     private static <T> List<Method> _benchmarkableMethods(Class<T> clazz) throws InstantiationException {
         Method[] classMethods = clazz.getDeclaredMethods();
+        System.out.println(clazz.getSimpleName());
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
-            boolean accessible;
-            if (Modifier.isStatic(method.getModifiers())) {
-                accessible = method.canAccess(null);
-            } else {
-                T instance = _createNewInstance(clazz);
-                accessible = method.canAccess(instance);
-            }
-
-            if (accessible && method.isAnnotationPresent(Benchmarkable.class)) {
+            if (method.isAnnotationPresent(Benchmarkable.class)
+                && !method.isSynthetic()) {
+                System.out.println(clazz.getSimpleName() + " " + method.getName());
                 annotatedMethods.add(method);
             }
         }
@@ -128,7 +129,7 @@ public class Runner {
         } catch (IllegalArgumentException | NoSuchMethodException e) {
             // Thrown when wrong arguments are passed to constructor, or no such constructor exists;
             // in this case, it means no zero-args constructor is present and the benchmark was invalid
-            throw new InstantiationException("No zero-args constructor found for class " + className);
+            throw new InstantiationException(e.getMessage());
         } catch (IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException e) {
             // Other errors don't reflect a problem with the benchmarking annotations,
             // so we won't throw anything, just warn the user
