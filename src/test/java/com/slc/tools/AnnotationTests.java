@@ -1,7 +1,6 @@
 package com.slc.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Scanner;
 
@@ -48,20 +46,6 @@ public class AnnotationTests {
         }
 
     }
-
-    @Test
-    public void annotatedFetchTest() throws NoSuchMethodException {        
-        Method correct = BenchmarkHolder.class.getDeclaredMethod("emptyBenchmark", int.class);
-        Method incorrect = BenchmarkHolder.class.getDeclaredMethod("incorrectBenchmark");
-        Method notAnnotated = BenchmarkHolder.class.getDeclaredMethod("notABenchmark");
-
-        List<Method> shouldOnlyBeBenchmarks = Runner.getBenchmarks(BenchmarkHolder.class);
-        assertTrue(shouldOnlyBeBenchmarks.contains(correct));
-        assertFalse(shouldOnlyBeBenchmarks.contains(incorrect));
-        assertFalse(shouldOnlyBeBenchmarks.contains(notAnnotated));
-    }
-
-
 
     @Test
     public void returnTest() {

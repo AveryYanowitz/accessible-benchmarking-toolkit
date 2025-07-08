@@ -21,43 +21,45 @@ public class Runner {
     /**
      * Runs all of the `@Benchmarkable` methods written in a given class.
      * @param <T> The type of data the Benchmarkable methods take as input
-     * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
+     * @param clazz The class containing the Benchmarkable methods you want to run
      * @param dataToTest A list of data to run the benchmark methods on
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException
      * @throws IllegalArgumentException
      * @throws ReflectiveOperationException
      */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> classWithBenchmarks, List<T> dataToTest) 
+    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> clazz, List<T> dataToTest) 
                                                             throws IOException, IllegalArgumentException, ReflectiveOperationException {
-        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
+        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
         if (classAnno != null) {
-            return runBenchmarks(classWithBenchmarks, dataToTest, classAnno.outputTo());
+            return runBenchmarks(clazz, dataToTest, classAnno.outputTo());
         } else {
-            return runBenchmarks(classWithBenchmarks, dataToTest, OutputType.JSON);
+            return runBenchmarks(clazz, dataToTest, OutputType.JSON);
         }
     }
 
     /**
      * Runs all of the `@Benchmarkable` methods written in a given class and overrides the class's output type.
      * @param <T> The type of data the Benchmarkable methods take as input
-     * @param classWithBenchmarks The class containing the Benchmarkable methods you want to run
+     * @param clazz The class containing the Benchmarkable methods you want to run
      * @param dataToTest A list of data to run the benchmark methods on
-     * @param outputOverride Overrides a specified OutputType in classWithBenchmarks
+     * @param outputOverride Overrides a specified OutputType in clazz
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
      * @throws InstantiationException When non-static benchmarks are present, but no zero-args constructor exists or is visible
      */
-    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> classWithBenchmarks, List<T> dataToTest, OutputType outputTo) 
+    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest, OutputType outputTo) 
                                                         throws IOException, InstantiationException {
-        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
-        Jsonifier jsonifier = getJsonifier(classWithBenchmarks);
+        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
+        if (classAnno == null) {
+            classAnno = DefaultSettings.class.getAnnotation(BenchmarkSuite.class);
+        }
+        Jsonifier jsonifier = getJsonifier(clazz);
 
-        List<Method> methodsToTest = getBenchmarks(classWithBenchmarks);
         List<BenchmarkStats> resultsList = new ArrayList<>();
         Frequency whenToInit = classAnno.createNewInstance();
-        C target = _createNewInstance(classWithBenchmarks);
-        for (Method method : methodsToTest) {
+        C target = _createNewInstance(clazz);
+        for (Method method : _benchmarkableMethods(clazz)) {
             Stream<BenchmarkStats> results;
             if (Modifier.isStatic(method.getModifiers())) {
                 results = _benchmarkStatic(method, classAnno, dataToTest);
@@ -65,7 +67,7 @@ public class Runner {
                 if (whenToInit == Frequency.NEVER) {
                     continue;
                 } else if (whenToInit == Frequency.PER_METHOD) {
-                    target = _createNewInstance(classWithBenchmarks);
+                    target = _createNewInstance(clazz);
                 }
                 results = _benchmarkWithTarget(method, classAnno, target, dataToTest);
             }
@@ -89,21 +91,28 @@ public class Runner {
         return resultsList;
     }
 
-    public static List<Method> getBenchmarks(Class<?> clazz) {
+    private static <T> List<Method> _benchmarkableMethods(Class<T> clazz) throws InstantiationException {
         Method[] classMethods = clazz.getDeclaredMethods();
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
-            if (method.isAnnotationPresent(Benchmarkable.class)
-            && method.canAccess(null)) {
+            boolean accessible;
+            if (Modifier.isStatic(method.getModifiers())) {
+                accessible = method.canAccess(null);
+            } else {
+                T instance = _createNewInstance(clazz);
+                accessible = method.canAccess(instance);
+            }
+
+            if (accessible && method.isAnnotationPresent(Benchmarkable.class)) {
                 annotatedMethods.add(method);
             }
         }
         return annotatedMethods;
     }
 
-    public static Jsonifier getJsonifier(Class<?> classWithBenchmarks) {
+    public static Jsonifier getJsonifier(Class<?> clazz) {
         String savePath;
-        BenchmarkSuite classAnno = classWithBenchmarks.getAnnotation(BenchmarkSuite.class);
+        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
         if (classAnno != null) {
             savePath = classAnno.saveLocation() + "/" + classAnno.fileName();
         } else {
@@ -164,6 +173,10 @@ public class Runner {
         }
         return benchmarkStaticMethod(method, dataToTest.stream(), maxDuration, benchmark.clockFrequency(),
                                             benchmark.idName(), benchmark.idIsMethod(), testName);
+    }
+
+    @BenchmarkSuite
+    private static class DefaultSettings {
     }
 
 }
