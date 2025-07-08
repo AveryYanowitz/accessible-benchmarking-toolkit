@@ -9,8 +9,8 @@ package com.slc.tools.annotations;
  * 
  */
 public enum Frequency {
+    NEVER,
     ON_INIT,
     PER_METHOD,
-    // PER_TEST_CASE, // TODO: very hard to implement
-    NEVER,
+    // PER_TEST_CASE, // TODO: not yet implemented
 }

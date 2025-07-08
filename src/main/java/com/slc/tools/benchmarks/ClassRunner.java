@@ -1,6 +1,7 @@
 package com.slc.tools.benchmarks;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -46,29 +47,39 @@ public class ClassRunner {
      * @throws InstantiationException When non-static benchmarks are present, but no zero-args constructor exists or is visible
      */
     public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest, OutputType outputTo) 
-                                                        throws IOException, InstantiationException {
+                                                        throws IOException {
         Jsonifier jsonifier = Jsonifier.getJsonifier(clazz);
 
         List<BenchmarkStats> resultsList = new ArrayList<>();
-        Frequency whenToInit = clazz.getAnnotation(BenchmarkSuite.class).whenToInstantiate();
+        Frequency whenToInit = clazz.getAnnotation(BenchmarkSuite.class).whenToInstantiate(); //TODO: possible NPE
         C target = null; // make sure it's init'd
+        boolean instanceMethodsAllowed = true;
+
         if (whenToInit == Frequency.ON_INIT) {
-            target = InstanceMethods.createNewInstance(clazz);
+            target = _createNewInstance(clazz);
+            instanceMethodsAllowed = (target == null); // returns null if no constructor visible
         }
         
         for (Method method : _getBenchmarkMethods(clazz)) {
-            System.out.println(clazz.getSimpleName() + " " + method.getName());
             Stream<BenchmarkStats> results;
             if (Modifier.isStatic(method.getModifiers())) {
-                results = StaticMethods.benchmarkStaticMethod(method, dataToTest);
-            } else {
+                results = MethodRunner.benchmarkStaticMethod(method, dataToTest);
+            } else if (instanceMethodsAllowed) {
                 if (whenToInit == Frequency.NEVER) {
-                    continue; // can't test non-static methods if we're not allowd to make an instance
+                    _warnFrequencyNever(clazz);
+                    instanceMethodsAllowed = false;
+                    continue;
                 }
-                // if (whenToInit == Frequency.PER_METHOD) {
-                //     target = _createNewInstance(clazz);
-                // }
-                results = InstanceMethods.benchmarkInstanceMethod(method, clazz, target, dataToTest);
+                if (whenToInit == Frequency.PER_METHOD) {
+                    target = _createNewInstance(clazz);
+                    if (target == null) { // returns null if no constructor visible
+                        instanceMethodsAllowed = false;
+                        continue;
+                    }
+                }
+                results = MethodRunner.benchmarkInstanceMethod(method, target, dataToTest);
+            } else {
+                continue;
             }
 
             if (outputTo == OutputType.PRINT) {
@@ -87,7 +98,7 @@ public class ClassRunner {
         return resultsList;
     }
 
-    private static <T> List<Method> _getBenchmarkMethods(Class<T> clazz) throws InstantiationException {
+    private static <T> List<Method> _getBenchmarkMethods(Class<T> clazz) {
         Method[] classMethods = clazz.getDeclaredMethods();
         System.out.println(clazz.getSimpleName());
         List<Method> annotatedMethods = new ArrayList<>();
@@ -101,6 +112,47 @@ public class ClassRunner {
         return annotatedMethods;
     }
 
+    private static <T> T _createNewInstance(Class<T> clazz) {
+        String className = clazz.getSimpleName();
+        try {
+            return clazz.getConstructor().newInstance();
+        } catch (IllegalArgumentException | NoSuchMethodException e) {
+            // Thrown when wrong arguments are passed to constructor, or no such constructor exists;
+            // in this case, it means no zero-args constructor is present and the benchmark was invalid
+            System.out.print("WARNING: Unable to test non-static methods in class "+clazz.getSimpleName());
+            System.out.print("because class is either missing @BenchmarkSuite annotation,");
+            System.out.println("does not specify value for whenToInstantiate, or specifies Frequency.NEVER");
+            return null;
+        } catch (IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException e) {
+            // Other errors don't reflect a problem with the benchmarking annotations,
+            // so we won't throw anything, just warn the user
+            System.out.print("Warning: Unable to instantiate object of type ");
+            System.out.print(className);
+            System.out.println("; skipping benchmark");
+            return null;
+        }
+    }
+
+    private static void _warnFrequencyNever(Class<?> clazz) {
+        /* There are three possible reasons this function was called:
+         * 
+         * 1. clazz is missing the @BenchmarkSuite annotation
+         * 2. clazz's @BenchmarkSuite annotation does not specify whenToInstantiate
+         * 3. clazz's @BenchmarkSuite annotation specifies Frequency.NEVER
+         * 
+         * The 2nd and 3rd issues are difficult to tell apart at runtime, 
+         * so this program groups them together for the purposes of warnings.
+         */
+        StringBuilder sb = new StringBuilder("WARNING: Unable to test non-static methods in class ");
+        sb.append(clazz.getSimpleName());
+        sb.append(" because ");
+        if (clazz.isAnnotationPresent(BenchmarkSuite.class)) {
+            sb.append("class is missing @BenchmarkSuite annotation");
+        } else {
+            sb.append("class does not specify value for whenToInstantiate, or specifies Frequency.NEVER");
+        }
+        System.out.println(sb.toString());
+    }
 
     /** Just used to store the default \@BenchmarkSuite annotation for reference */
     @BenchmarkSuite
