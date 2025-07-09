@@ -4,7 +4,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.stream.Stream;
 
-import com.slc.tools.benchmarks.LambdaRunner;
+import com.slc.tools.runners.LambdaRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.util.Jsonifier;
 

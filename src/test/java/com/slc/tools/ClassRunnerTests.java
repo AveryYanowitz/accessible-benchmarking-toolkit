@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.slc.tools.annotations.OutputType;
-import com.slc.tools.benchmarks.ClassRunner;
 import com.slc.tools.examples.ExampleClass;
+import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
 import com.slc.tools.utility_classes.ArrListWrapper;

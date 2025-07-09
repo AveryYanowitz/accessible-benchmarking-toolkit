@@ -1,4 +1,4 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.runners;
 
 import java.time.Duration;
 import java.util.function.Consumer;

@@ -3,7 +3,7 @@ package com.slc.tools.examples;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.slc.tools.benchmarks.ClassRunner;
+import com.slc.tools.runners.ClassRunner;
 
 public class Methods {
     public static void main(String[] args) throws Exception {

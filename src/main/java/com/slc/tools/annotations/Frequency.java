@@ -12,5 +12,5 @@ public enum Frequency {
     NEVER,
     ON_INIT,
     PER_METHOD,
-    // PER_TEST_CASE, // TODO: not yet implemented
+    // PER_SIZE_VALUE, // TODO: not yet implemented
 }

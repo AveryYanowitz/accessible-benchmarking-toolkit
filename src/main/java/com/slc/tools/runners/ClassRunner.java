@@ -1,4 +1,4 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.runners;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -82,14 +82,18 @@ public class ClassRunner {
                 continue;
             }
 
-            if (outputTo == OutputType.PRINT) {
-                results.forEach((result) -> {
-                    System.out.println(result);
-                });
-            } else if (outputTo == OutputType.JSON) {
-                jsonifier.addToJson(results);
-            } else {
-                results.forEach(resultsList::add);
+            switch (outputTo) {
+                case PRINT:
+                    results.forEach((result) -> {
+                        System.out.println(result);
+                    });
+                    break;
+                case JSON:
+                    jsonifier.addToJson(results);
+                    break;
+                case RETURN:
+                    results.forEach(resultsList::add);
+                    break;
             }
         }
         if (jsonifier.size() > 0) {
@@ -100,12 +104,10 @@ public class ClassRunner {
 
     private static <T> List<Method> _getBenchmarkMethods(Class<T> clazz) {
         Method[] classMethods = clazz.getDeclaredMethods();
-        System.out.println(clazz.getSimpleName());
         List<Method> annotatedMethods = new ArrayList<>();
         for (Method method : classMethods) {
             if (method.isAnnotationPresent(Benchmarkable.class)
                 && !method.isSynthetic()) {
-                System.out.println(clazz.getSimpleName() + " " + method.getName());
                 annotatedMethods.add(method);
             }
         }

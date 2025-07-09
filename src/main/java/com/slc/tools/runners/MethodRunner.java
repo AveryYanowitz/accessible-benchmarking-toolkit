@@ -1,6 +1,5 @@
-package com.slc.tools.benchmarks;
+package com.slc.tools.runners;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
@@ -101,6 +100,5 @@ public class MethodRunner {
         Double id = FormatUtils.getPropertyByName(input, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
     }
-
 
 }
