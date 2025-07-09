@@ -6,8 +6,8 @@ import java.util.List;
 public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration maxDuration,
                     int loopsCompleted, Duration actualTimeElapsed, Double size, String testName) {
 
-    public double getAverageTimeMillis() {
-        return actualTimeElapsed.toMillis() / loopsCompleted;
+    public long averageTimeNanos() {
+        return actualTimeElapsed.toNanos() / loopsCompleted;
     }
 
     @Override
@@ -38,8 +38,8 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
         sb.append("\n");
 
         sb.append("Average Time Per Call:    ");
-        sb.append(getAverageTimeMillis());
-        sb.append(" ms \n");
+        sb.append(averageTimeNanos());
+        sb.append(" ns \n");
 
         return sb.toString();
     }

@@ -15,26 +15,6 @@ import com.slc.tools.util.Jsonifier;
 
 public class ClassRunner {
     /**
-     * Runs all of the `@Benchmarkable` methods written in a given class.
-     * @param <T> The type of data the Benchmarkable methods take as input
-     * @param clazz The class containing the Benchmarkable methods you want to run
-     * @param dataToTest A list of data to run the benchmark methods on
-     * @return The results of methods with OutputType.RETURN; may be empty
-     * @throws IOException
-     * @throws IllegalArgumentException
-     * @throws ReflectiveOperationException
-     */
-    public static <T> List<BenchmarkStats> runBenchmarks(Class<?> clazz, List<T> dataToTest) 
-                                                            throws IOException, IllegalArgumentException, ReflectiveOperationException {
-        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
-        if (classAnno == null) {
-            return runBenchmarks(clazz, dataToTest, OutputType.JSON);
-        } else {
-            return runBenchmarks(clazz, dataToTest, classAnno.outputTo());
-        }
-    }
-
-    /**
      * Runs all of the `@Benchmarkable` methods written in a given class and overrides the class's output type.
      * @param <T> The type of data the Benchmarkable methods take as input
      * @param clazz The class containing the Benchmarkable methods you want to run
@@ -42,10 +22,9 @@ public class ClassRunner {
      * @param outputOverride Overrides a specified OutputType in clazz
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
-     * @throws InstantiationException When non-static benchmarks are present, but no zero-args constructor exists or is visible
      */
-    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest, OutputType outputTo) 
-                                                        throws IOException {
+    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest) 
+                                    throws IOException {
         Jsonifier jsonifier = Jsonifier.getJsonifier(clazz);
         BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
         if (classAnno == null) {
@@ -55,6 +34,7 @@ public class ClassRunner {
         List<BenchmarkStats> resultsList = new ArrayList<>();
         Frequency whenToInit = classAnno.whenToInstantiate();
         C target = null;
+        OutputType outputTo = classAnno.outputTo();
 
         if (whenToInit == Frequency.ON_INIT) {
             target = createNewInstance(clazz);

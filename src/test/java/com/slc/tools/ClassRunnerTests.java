@@ -14,13 +14,13 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 
-import com.slc.tools.annotations.OutputType;
 import com.slc.tools.examples.Sorters;
 import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
 import com.slc.tools.utility_classes.ArrListWrapper;
 import com.slc.tools.utility_classes.BenchmarkHolder;
+import com.slc.tools.utility_classes.JsonBenchmarks;
 
 
 public class ClassRunnerTests {
@@ -51,19 +51,12 @@ public class ClassRunnerTests {
     }
 
     @Test
-    public void returnTest() {
+    public void returnTest() throws IOException {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
 
-        try {
-            results = ClassRunner.runBenchmarks(clazz, randomInts);
-        } catch (Exception e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-            return;
-        }
-
+        results = ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(8, results.size());
         
         for (BenchmarkStats result : results) {
@@ -74,7 +67,7 @@ public class ClassRunnerTests {
 
     @Test
     public void jsonSaveTest() {
-        Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        Class<JsonBenchmarks> clazz = JsonBenchmarks.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
         
@@ -82,7 +75,7 @@ public class ClassRunnerTests {
         String afterText;
         try {
             beforeText = _getJsonText();
-            results = ClassRunner.runBenchmarks(clazz, randomInts, OutputType.JSON);
+            results = ClassRunner.runBenchmarks(clazz, randomInts);
             afterText = _getJsonText();
         } catch (Exception e) {
             fail(e.getMessage());

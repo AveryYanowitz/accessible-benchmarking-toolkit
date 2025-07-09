@@ -23,7 +23,7 @@ public class Jsonifier {
         public NamelessStats(BenchmarkStats baseStats) {
             this(baseStats.size(), baseStats.clockChecks(), baseStats.loopsBetweenChecks(),
             baseStats.loopsCompleted(), baseStats.maxDuration(), baseStats.actualTimeElapsed(),
-            baseStats.getAverageTimeMillis());
+            baseStats.averageTimeNanos());
         }
     }
 

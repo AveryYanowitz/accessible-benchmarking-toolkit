@@ -4,10 +4,10 @@ import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
 import com.slc.tools.annotations.OutputType;
 
-@BenchmarkSuite(outputTo = OutputType.RETURN)
-public class BenchmarkHolder {
+@BenchmarkSuite(outputTo = OutputType.JSON, saveLocation = "src/test/output")
+public class JsonBenchmarks {
     static int numberOfInstancesMade = 0;
-    public BenchmarkHolder() {
+    public JsonBenchmarks() {
         numberOfInstancesMade++;
     }
 
@@ -19,8 +19,15 @@ public class BenchmarkHolder {
         return x*x;
     }
 
+    @Benchmarkable
+    public void incorrectBenchmark() { }
+
+    @Benchmarkable
+    private void privateBenchmark() { } // shouldn't be tested at all
+    
+    public void notABenchmark() { }
+
     public static int getInstances() {
         return numberOfInstancesMade;
     }
-
 }

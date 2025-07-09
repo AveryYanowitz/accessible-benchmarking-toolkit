@@ -27,7 +27,6 @@ public class MethodRunner {
         } else {
             @SuppressWarnings("unchecked")
             C nonNullTarget = (C) ClassRunner.createNewInstance(method.getDeclaringClass());
-            System.out.println("Target: "+nonNullTarget);
             return _benchmarkInstanceMethod(method, nonNullTarget, dataToTest);
         }
     }

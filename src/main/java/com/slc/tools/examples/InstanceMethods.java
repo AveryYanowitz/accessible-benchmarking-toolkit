@@ -16,21 +16,23 @@ import edu.slc.cs.stack_queue_comparison.Queue;
 
 @BenchmarkSuite(outputTo = OutputType.PRINT, whenToInstantiate = Frequency.PER_SIZE_VALUE)
 public class InstanceMethods {
-    private Queue<Integer> _q1;
-    private Queue<Integer> _q2;
+    private Queue<Integer> _q1, _q2;
+    public int q1Size, q2Size;
 
     public InstanceMethods() {
         _q1 = new ArrayListQueue<>();
         _q2 = new LinkQueue<>();
     }
     
-    @Benchmarkable(testName = "ArrayList Queue")
+    @Benchmarkable(testName = "ArrayList Queue", idName = "q1Size", idIsMethod = false)
     public void arrListBenchmark(int n) {
+        q1Size = n;
         _massQueueing(_q1, n);
     }
 
-    @Benchmarkable(testName = "Linked Queue")
+    @Benchmarkable(testName = "Linked Queue", idName = "q2Size", idIsMethod = false)
     public void linkEnqueue(int n) {
+        q2Size = n;
         _massQueueing(_q2, n);
     }
     

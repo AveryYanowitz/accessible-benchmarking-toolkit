@@ -14,7 +14,19 @@ Download this project, open it, and run "mvn clean install" in the command line.
 
 (You may need to update the version number.) From there, you can import and call all of the classes and functions provided in the library.
 
-**Disclaimer: This project relies on Ema Sestakova's stack/queue implementation. I downloaded it, changed the group and artifact IDs, and ran `mvn install` on it. I'm not sure whether this will work on someone else's computer. Please let me know if not!**
+You also need Ema's stack/queue implementation (at time of writing, `mapletown-stack-queue`). Download it from Codeberg and find the following text in the `pom.xml` file:
+
+    <groupId>com.junit.example</groupId>
+    <artifactId>demo</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+Replace this text with the following:
+
+    <groupId>com.private.library</groupId>
+    <artifactId>stack-queue</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+Then, still in that directory, type `mvn install` in the command-line and hit enter.
 
 ## `annotations` Package
 ### @Benchmarkable
