@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.slc.tools.annotations.OutputType;
-import com.slc.tools.examples.ExampleClass;
+import com.slc.tools.examples.Sorters;
 import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
@@ -28,7 +28,7 @@ public class ClassRunnerTests {
     @Test
     public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(0, BenchmarkHolder.getInstances()); // all methods are static, so no instances should be created
     }
@@ -36,7 +36,7 @@ public class ClassRunnerTests {
     @Test
     public void frequencyInit() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
     }
@@ -44,7 +44,7 @@ public class ClassRunnerTests {
     @Test
     public void frequencyMethod() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(2, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
         
@@ -53,7 +53,7 @@ public class ClassRunnerTests {
     @Test
     public void returnTest() {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
 
         try {
@@ -75,7 +75,7 @@ public class ClassRunnerTests {
     @Test
     public void jsonSaveTest() {
         Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
-        List<Integer> randomInts = ExampleClass.getRandomIntList(4);
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
         
         String beforeText;

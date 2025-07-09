@@ -27,6 +27,7 @@ public class MethodRunner {
         } else {
             @SuppressWarnings("unchecked")
             C nonNullTarget = (C) ClassRunner.createNewInstance(method.getDeclaringClass());
+            System.out.println("Target: "+nonNullTarget);
             return _benchmarkInstanceMethod(method, nonNullTarget, dataToTest);
         }
     }
@@ -45,7 +46,7 @@ public class MethodRunner {
                                             List<T> dataToTest) {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
-        String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
+        String testName = (benchmark.testName() == null) ? method.getName() : benchmark.testName();
 
         return dataToTest.stream().map((T streamMember) -> 
             {

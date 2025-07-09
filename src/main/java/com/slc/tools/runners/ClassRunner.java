@@ -1,7 +1,6 @@
 package com.slc.tools.runners;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -115,22 +114,15 @@ public class ClassRunner {
     }
 
     static <T> T createNewInstance(Class<T> clazz) {
-        String className = clazz.getSimpleName();
         try {
             return clazz.getConstructor().newInstance();
-        } catch (IllegalArgumentException | NoSuchMethodException e) {
+        } catch (Exception e) {
             // Thrown when wrong arguments are passed to constructor, or no such constructor exists;
             // in this case, it means no zero-args constructor is present and the benchmark was invalid
-            System.out.print("WARNING: Unable to test non-static methods in class "+clazz.getSimpleName());
-            System.out.print("because class is either missing @BenchmarkSuite annotation,");
-            System.out.println("does not specify value for whenToInstantiate, or specifies Frequency.NEVER");
-            return null;
-        } catch (IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException e) {
-            // Some other kind of error happened
-            System.out.print("WARNING: Unable to instantiate object of type ");
-            System.out.print(className);
-            System.out.println("; skipping benchmark");
-            System.out.println(e.getMessage());
+            System.out.print("WARNING: Unable to instantiate object of type "+clazz.getSimpleName());
+            System.out.print(". Make sure class has a visible no-args constructor, is marked with ");
+            System.out.println("@BenchmarkSuite, and specifies a value for whenToInstantiate other than NEVER");
+            e.printStackTrace();
             return null;
         }
     }

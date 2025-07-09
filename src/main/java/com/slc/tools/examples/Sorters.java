@@ -9,7 +9,7 @@ import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
 
 @BenchmarkSuite
-public class ExampleClass {
+public class Sorters {
 
     @Benchmarkable(testName = "Bubble Sort")
     public static boolean bubbleSort(List<Integer> a) {
