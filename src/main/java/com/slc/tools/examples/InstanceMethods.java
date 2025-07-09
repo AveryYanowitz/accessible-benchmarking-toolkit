@@ -24,13 +24,13 @@ public class InstanceMethods {
         _q2 = new LinkQueue<>();
     }
     
-    @Benchmarkable(testName = "ArrayList Queue", idName = "q1Size", idIsMethod = false)
+    @Benchmarkable(testName = "ArrayList Queue", idName = "intValue")
     public void arrListBenchmark(int n) {
         q1Size = n;
         _massQueueing(_q1, n);
     }
 
-    @Benchmarkable(testName = "Linked Queue", idName = "q2Size", idIsMethod = false)
+    @Benchmarkable(testName = "Linked Queue", idName = "intValue")
     public void linkEnqueue(int n) {
         q2Size = n;
         _massQueueing(_q2, n);

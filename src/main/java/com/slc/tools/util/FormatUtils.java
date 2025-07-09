@@ -66,8 +66,8 @@ public class FormatUtils {
     }
 
     public static <T> Double getPropertyByName(T object, String propertyName, boolean searchMethods) {
-        String value;
         try {
+            String value;
             if (searchMethods) {            
                 Method method = object.getClass().getMethod(propertyName);
                 method.setAccessible(true);
@@ -77,18 +77,9 @@ public class FormatUtils {
                 field.setAccessible(true);
                 value = field.get(object).toString();
             }
-        } catch (ReflectiveOperationException e) {
+            return Double.parseDouble(value);
+        } catch (ReflectiveOperationException | NumberFormatException e) {
             return null;
-        }
-        return isNumber(value) ? Double.parseDouble(value) : null;
-    }
-
-    public static boolean isNumber(String toCheck) {
-        try {
-            Double.parseDouble(toCheck);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
         }
     }
 }
