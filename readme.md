@@ -38,17 +38,11 @@ If you have a class with a series of @Benchmarkable methods, you can mark the cl
 - **String saveLocation:** File path indicating where to save a JSON file; has no effect if using `PRINT` or `RETURN` as output type. Defaults to "src/main/output".
 - **String fileName:** File name for JSON file; has no effect if using `PRINT` or `RETURN` as output type. Defaults to "results.json".
 
-## `benchmarks` Package
+## `runners` Package
 ### ClassRunner and MethodRunner
 `ClassRunner.java` provides the means to run all of the benchmark methods in a particular class. (See **`annotations` Package** below to learn how to create a benchmark method.) From an API standpoint, this is very simple: simply call runBenchmarks with the class you have in mind and a list of data. This data will be run through every \@Benchmarkable method in the provided class. If no `@BenchmarkSuite` annotation is present, or if it does not specify how to report data, it will be saved to a JSON file. (See `Jsonifier` section below for more information.) 
 
-Under the hood, ClassRunner goes through each Benchmark method of the provided class. If the method is static, then it makes a call to `MethodRunner.benchmarkStaticMethod()`. If it's an instance method, its behavior instead depends on the \@BenchmarkSuite annotation on the method's declaring class, and in particular, on the value of `whenToInstantiate`. **If this annotation is not present, or this value is not specified, the method will be skipped. If the class does not have a public no-args constructor, the method will be skipped.** There are three possible values for this value, given by the Frequency enum:
-
-1. Frequency.NEVER: The instance method is skipped entirely.
-2. Frequency.ON_INIT: Upon calling `ClassRunner.runBenchmarks()`, the program will instantiate an object of the method's declaring class. This will be passed to every test.
-3. Frequency.PER_METHOD: `ClassRunner.runBenchmarks()` will instantiate an object of the declaring class for each method separately.
-
-Eventually, I want to add a Frequency.PER_TEST_CASE option, which will instantiate an object once for each element in the dataToTest list. I thought about a Frequency.PER_CALL option, but that doesn't work because it would interfere with the timing library, since there is no instantaneous instantiation.
+Under the hood, ClassRunner goes through each Benchmark method of the provided class, initializes an object if necessary, and calls `MethodRunner.benchmarkMethod()` on it. That looks at whether or not the method is static; if so, it ignores the object provided (if any) and feeds it to `_benchmarkStaticMethod()`. Otherwise, it feeds it to `_benchmarkInstanceMethod()`, initializing an object if none has been provided.
 
 ### LambdaRunner
 There are two benchmarking methods provided for benchmarking lambda functions: `benchmarkConsumable()` and `benchmarkFunction()`. The latter is just a wrapper around the forumer, which takes a Stream\<T> and runs its Consumer many times for each element of the Stream. It reports the averages in the form of a Stream\<BenchmarkStats> (see **Results** below). Instead of a Stream\<T>, you may also pass an Iterable\<T> or its subclasses, or a T[], which will be converted to a Stream\<T>.

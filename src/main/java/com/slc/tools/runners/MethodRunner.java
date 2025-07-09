@@ -13,6 +13,24 @@ import com.slc.tools.util.FormatUtils;
 
 public class MethodRunner {
 
+    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, C target, List<T> dataToTest) {
+        if (Modifier.isStatic(method.getModifiers())) {
+            return _benchmarkStaticMethod(method, dataToTest);
+        } else {
+            return _benchmarkInstanceMethod(method, target, dataToTest);
+        }
+    }
+
+    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, List<T> dataToTest) {
+        if (Modifier.isStatic(method.getModifiers())) {
+            return _benchmarkStaticMethod(method, dataToTest);
+        } else {
+            @SuppressWarnings("unchecked")
+            C nonNullTarget = (C) ClassRunner.createNewInstance(method.getDeclaringClass());
+            return _benchmarkInstanceMethod(method, nonNullTarget, dataToTest);
+        }
+    }
+
     /**
      * Benchmark one method, calling it on the same object each time.
      * @param <C> The class marked with BenchmarkSuite
@@ -23,7 +41,8 @@ public class MethodRunner {
      * @param dataToTest A list of data to use as parameters for the given method
      * @return A Stream of BenchmarkStats representing the results of the benchmarking
      */
-    static <C, T> Stream<BenchmarkStats> benchmarkInstanceMethod(Method method, C target, List<T> dataToTest) {
+    private static <C, T> Stream<BenchmarkStats> _benchmarkInstanceMethod(Method method, C target, 
+                                            List<T> dataToTest) {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
         String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
@@ -50,12 +69,12 @@ public class MethodRunner {
      * @param dataToTest A list of data to use as parameters for the given method
      * @return A Stream of BenchmarkStats representing the results of the benchmarking
      */
-    static <T> Stream<BenchmarkStats> benchmarkStaticMethod(Method method, List<T> dataToTest) {
+    private static <T> Stream<BenchmarkStats> _benchmarkStaticMethod(Method method, List<T> dataToTest) {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
         String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
         if (!Modifier.isStatic(method.getModifiers())) {
-            throw new IllegalArgumentException("Cannot call _benchmarkStatic on a non-static method");
+            throw new IllegalArgumentException("Cannot call _benchmarkStaticMethod() on a non-static method");
         }
         return dataToTest.stream().map((T streamMember) -> 
             {

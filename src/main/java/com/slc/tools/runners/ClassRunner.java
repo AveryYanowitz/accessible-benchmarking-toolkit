@@ -3,7 +3,6 @@ package com.slc.tools.runners;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -49,36 +48,37 @@ public class ClassRunner {
     public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest, OutputType outputTo) 
                                                         throws IOException {
         Jsonifier jsonifier = Jsonifier.getJsonifier(clazz);
+        BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
+        if (classAnno == null) {
+            classAnno = DefaultSettings.class.getAnnotation(BenchmarkSuite.class);
+        }
 
         List<BenchmarkStats> resultsList = new ArrayList<>();
-        Frequency whenToInit = clazz.getAnnotation(BenchmarkSuite.class).whenToInstantiate(); //TODO: possible NPE
-        C target = null; // make sure it's init'd
-        boolean instanceMethodsAllowed = true;
+        Frequency whenToInit = classAnno.whenToInstantiate();
+        C target = null;
 
         if (whenToInit == Frequency.ON_INIT) {
-            target = _createNewInstance(clazz);
-            instanceMethodsAllowed = (target == null); // returns null if no constructor visible
+            target = createNewInstance(clazz);
         }
         
         for (Method method : _getBenchmarkMethods(clazz)) {
             Stream<BenchmarkStats> results;
-            if (Modifier.isStatic(method.getModifiers())) {
-                results = MethodRunner.benchmarkStaticMethod(method, dataToTest);
-            } else if (instanceMethodsAllowed) {
-                if (whenToInit == Frequency.NEVER) {
-                    _warnFrequencyNever(clazz);
-                    instanceMethodsAllowed = false;
-                    continue;
+            try {                
+                switch (whenToInit) {
+                    case ON_INIT:
+                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+                        break;
+                    case PER_METHOD:
+                        target = createNewInstance(clazz);
+                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+                        break;
+                    default: // NEVER or PER_SIZE_VALUE
+                        results = MethodRunner.benchmarkMethod(method, dataToTest);
+                        break;
                 }
-                if (whenToInit == Frequency.PER_METHOD) {
-                    target = _createNewInstance(clazz);
-                    if (target == null) { // returns null if no constructor visible
-                        instanceMethodsAllowed = false;
-                        continue;
-                    }
-                }
-                results = MethodRunner.benchmarkInstanceMethod(method, target, dataToTest);
-            } else {
+            } catch (Exception e) {
+                System.out.println("Skipping method " + method.getName() + "because: ");
+                System.out.println(e.getMessage());
                 continue;
             }
 
@@ -114,7 +114,7 @@ public class ClassRunner {
         return annotatedMethods;
     }
 
-    private static <T> T _createNewInstance(Class<T> clazz) {
+    static <T> T createNewInstance(Class<T> clazz) {
         String className = clazz.getSimpleName();
         try {
             return clazz.getConstructor().newInstance();
@@ -126,34 +126,13 @@ public class ClassRunner {
             System.out.println("does not specify value for whenToInstantiate, or specifies Frequency.NEVER");
             return null;
         } catch (IllegalAccessException | SecurityException | InstantiationException | InvocationTargetException e) {
-            // Other errors don't reflect a problem with the benchmarking annotations,
-            // so we won't throw anything, just warn the user
-            System.out.print("Warning: Unable to instantiate object of type ");
+            // Some other kind of error happened
+            System.out.print("WARNING: Unable to instantiate object of type ");
             System.out.print(className);
             System.out.println("; skipping benchmark");
+            System.out.println(e.getMessage());
             return null;
         }
-    }
-
-    private static void _warnFrequencyNever(Class<?> clazz) {
-        /* There are three possible reasons this function was called:
-         * 
-         * 1. clazz is missing the @BenchmarkSuite annotation
-         * 2. clazz's @BenchmarkSuite annotation does not specify whenToInstantiate
-         * 3. clazz's @BenchmarkSuite annotation specifies Frequency.NEVER
-         * 
-         * The 2nd and 3rd issues are difficult to tell apart at runtime, 
-         * so this program groups them together for the purposes of warnings.
-         */
-        StringBuilder sb = new StringBuilder("WARNING: Unable to test non-static methods in class ");
-        sb.append(clazz.getSimpleName());
-        sb.append(" because ");
-        if (clazz.isAnnotationPresent(BenchmarkSuite.class)) {
-            sb.append("class is missing @BenchmarkSuite annotation");
-        } else {
-            sb.append("class does not specify value for whenToInstantiate, or specifies Frequency.NEVER");
-        }
-        System.out.println(sb.toString());
     }
 
     /** Just used to store the default \@BenchmarkSuite annotation for reference */
