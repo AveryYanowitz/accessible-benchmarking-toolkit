@@ -3,7 +3,6 @@ package com.slc.tools.examples;
 import java.io.IOException;
 import java.util.List;
 
-import com.groupid.Generators.SuccessorGenerator;
 import com.slc.tools.annotations.BenchmarkSuite;
 import com.slc.tools.annotations.Benchmarkable;
 import com.slc.tools.annotations.Frequency;
@@ -43,12 +42,7 @@ public class InstanceMethods {
     }
     
     public static void main(String[] args) throws IllegalArgumentException, IOException, ReflectiveOperationException {
-        List<Integer> sizes = new SuccessorGenerator.SuccGenBuilder<Integer>()
-                            .lambda((x) -> 2*x)
-                            .seed(16)
-                            .limit(10)
-                            .build()
-                            .toList();
+        List<Integer> sizes = Sorters.getRandomIntList(10);
         ClassRunner.runBenchmarks(InstanceMethods.class, sizes);
     }
 
