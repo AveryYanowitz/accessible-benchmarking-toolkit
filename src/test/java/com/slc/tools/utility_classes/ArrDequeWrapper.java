@@ -21,6 +21,11 @@ public class ArrDequeWrapper extends ArrayDequeQueue<Integer> {
         super.enqueue(element);
     }
 
+    @Benchmarkable(nanoTime = 10_000_000)
+    public void otherMethod(Integer x) {
+        
+    }
+
     public static int getInstances() {
         return numberOfInstancesMade;
     }

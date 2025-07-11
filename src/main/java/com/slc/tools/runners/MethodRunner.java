@@ -76,7 +76,6 @@ public class MethodRunner {
                     } else {
                         return _singleMethodTest(method, target, streamMember, maxDuration, 
                             benchmark.clockFrequency(), benchmark.idName(), benchmark.idIsMethod(), testName);
-                        
                     }
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();

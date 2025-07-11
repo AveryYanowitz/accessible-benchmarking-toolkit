@@ -1,6 +1,7 @@
 package com.slc.tools;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,9 +9,11 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,55 +22,76 @@ import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
 import com.slc.tools.utility_classes.ArrListWrapper;
+import com.slc.tools.utility_classes.DifferentArgs;
 import com.slc.tools.utility_classes.EachSize;
 import com.slc.tools.utility_classes.Never;
 import com.slc.tools.utility_classes.JsonBenchmarks;
 
 
 public class ClassRunnerTests {
-
     @Test
     public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         Class<Never> clazz = Never.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(0, Never.getInstances()); // all methods are static, so no instances should be created
+        assertFalse(out.toString().contains("Skipping method"));
     }
 
     @Test
     public void frequencyInit() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
+
         // Expected instances: 1 from ON_INIT + 1 per method from _isValidMethod
-        assertEquals(2, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
+        assertEquals(3, ArrDequeWrapper.getInstances());
+        assertFalse(out.toString().contains("Skipping method"));
     }
 
     @Test
     public void frequencyMethod() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
-        assertEquals(4, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
+        assertEquals(4, ArrListWrapper.getInstances());
+        assertFalse(out.toString().contains("Skipping method"));
     }
 
     @Test
     public void frequencySizeValue() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         Class<EachSize> clazz = EachSize.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        assertEquals(randomInts.size(), ArrListWrapper.getInstances()); // should make a new instance for each test case
+        assertEquals(randomInts.size(), ArrListWrapper.getInstances());
+        assertFalse(out.toString().contains("Skipping method"));
     }
 
     @Test
     public void returnTest() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
         Class<Never> clazz = Never.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
 
         results = ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(8, results.size());
+        assertFalse(out.toString().contains("Skipping method"));
         
         for (BenchmarkStats result : results) {
             assertNotNull(result);
@@ -94,6 +118,22 @@ public class ClassRunnerTests {
 
         assertEquals(0, results.size());
         assertNotEquals(beforeText, afterText);
+    }
+
+    @Test
+    public void differentArgsTest() throws IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(out));
+
+        Class<DifferentArgs> clazz = DifferentArgs.class;
+        List<Integer> intArgs = Sorters.getRandomIntList(4);
+        List<Boolean> boolArgs = Sorters.getRandomBoolList(4);
+        List<Object> objArgs = Sorters.getObjList(4);
+        
+        List<BenchmarkStats> results = ClassRunner.runBenchmarks(clazz, intArgs, boolArgs, objArgs);
+        assertFalse(out.toString().contains("Skipping method"));
+        // Expected: 4 tries of intArgs, boolArgs, and objArgs, and 1 try of noArgs
+        assertEquals(13, results.size());        
     }
 
     private static String _getJsonText() {

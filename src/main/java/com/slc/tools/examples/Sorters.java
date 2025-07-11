@@ -82,4 +82,21 @@ public class Sorters {
         return list;
     }
 
+    public static List<Boolean> getRandomBoolList(int size) {
+        List<Boolean> list = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < size; i++) {
+            list.add(random.nextBoolean());
+        }
+        return list;
+    }
+
+    public static List<Object> getObjList(int size) {
+        List<Object> list = new ArrayList<>();
+        for (int i = 0; i < size; i++) {
+            list.add(new Object());
+        }
+        return list;
+    }
+
 }
