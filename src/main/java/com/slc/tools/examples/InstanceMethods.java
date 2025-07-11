@@ -40,7 +40,7 @@ public class InstanceMethods {
             q.dequeue();
         }
     }
-    
+
     public static void main(String[] args) throws IllegalArgumentException, IOException, ReflectiveOperationException {
         List<Integer> sizes = Sorters.getRandomIntList(10);
         ClassRunner.runBenchmarks(InstanceMethods.class, sizes);

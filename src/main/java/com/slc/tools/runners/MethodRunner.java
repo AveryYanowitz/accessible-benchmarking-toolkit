@@ -3,7 +3,6 @@ package com.slc.tools.runners;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.time.Duration;
-import java.util.List;
 import java.util.stream.Stream;
 
 import com.slc.tools.annotations.Benchmarkable;

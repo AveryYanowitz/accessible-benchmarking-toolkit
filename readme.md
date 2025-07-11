@@ -91,6 +91,6 @@ This class relies on the Jackson library for the file writing. The format is as 
         ...,
     ]
 
-NamelessStats is very similar to BenchmarkStats, except that it lacks the testName field. An array of NamelessStats objects are then stored with a DataField, which *does* have a testName, and the Jsonifier stores a list of DataPackages that it writes to the file.
+NamelessStats is very similar to BenchmarkStats, except that it lacks the testName field. An array of NamelessStats objects are then stored with a DataField, which *does* have a testName, and the Jsonifier stores a list of DataFields that it writes to the file.
 
 **WARNING: If you run JSONify multiple times with the same file name (or with default parameters), it will overwrite previous saves.**
