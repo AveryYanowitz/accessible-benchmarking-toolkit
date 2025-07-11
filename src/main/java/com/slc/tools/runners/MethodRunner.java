@@ -20,8 +20,9 @@ public class MethodRunner {
      * @param target If <code> method </code> is an instance method, it will be invoked on target; otherwise, this argument is ignored (and can be null)
      * @param dataToTest A Stream of data to call <code> method </code> with
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
+     * @throws IllegalArgumentException When called with invalid method
      */
-    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, C target, Stream<T> dataToTest) {
+    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, C target, Stream<T> dataToTest) throws IllegalArgumentException {
         if (Modifier.isStatic(method.getModifiers())) {
             return _benchmarkStaticMethod(method, dataToTest);
         } else {
@@ -37,19 +38,18 @@ public class MethodRunner {
      * @param method The method to test
      * @param dataToTest A Stream of data to call <code> method </code> with
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
+     * @throws IllegalArgumentException When called with invalid method
      */
-    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, Stream<T> dataToTest) {
+    static <C, T> Stream<BenchmarkStats> benchmarkMethod(Method method, Stream<T> dataToTest) throws IllegalArgumentException {
         if (Modifier.isStatic(method.getModifiers())) {
             return _benchmarkStaticMethod(method, dataToTest);
         } else {
-            @SuppressWarnings("unchecked")
-            C nonNullTarget = (C) ClassRunner.createNewInstance(method.getDeclaringClass());
-            return _benchmarkInstanceMethod(method, nonNullTarget, dataToTest);
+            return _benchmarkInstanceMethod(method, null, dataToTest);
         }
     }
 
     /**
-     * Benchmark one method, calling it on the same object each time.
+     * Benchmark one instance method, calling it on the same object each time.
      * @param <C> The class marked with BenchmarkSuite
      * @param <T> The type of data to be fed into <code> method </code> 
      * @param method The method to benchmark
@@ -57,41 +57,49 @@ public class MethodRunner {
      * @param target The object <code> method </code> will be called upon
      * @param dataToTest A list of data to use as parameters for <code> method </code>
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
+     * @throws IllegalArgumentException when called with invalid or static method
      */
     private static <C, T> Stream<BenchmarkStats> _benchmarkInstanceMethod(Method method, C target, 
-                                            Stream<T> dataToTest) {
+                                            Stream<T> dataToTest) throws IllegalArgumentException {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
         String testName = (benchmark.testName() == null) ? method.getName() : benchmark.testName();
-
+        if (Modifier.isStatic(method.getModifiers()) || !_isValidMethod(method, 1)) {
+            throw new IllegalArgumentException(method+" is either static, invalid, or both");
+        }                                                
         return dataToTest.map((T streamMember) -> 
             {
-                BenchmarkStats mapResult;
                 try {
-                    mapResult = _singleMethodTest(method, target, streamMember, maxDuration, 
-                    benchmark.clockFrequency(), benchmark.idName(), benchmark.idIsMethod(), testName);
+                    if (target == null) {
+                        return _singleMethodTest(method, ClassRunner.createNewInstance(method.getDeclaringClass()), streamMember, maxDuration, 
+                            benchmark.clockFrequency(), benchmark.idName(), benchmark.idIsMethod(), testName);
+                    } else {
+                        return _singleMethodTest(method, target, streamMember, maxDuration, 
+                            benchmark.clockFrequency(), benchmark.idName(), benchmark.idIsMethod(), testName);
+                        
+                    }
                 } catch (ReflectiveOperationException e) {
                     e.printStackTrace();
-                    mapResult = null;
+                    return null;
                 }
-                return mapResult;
             }
         );
     }
 
     /**
-     * Benchmark one method, calling it on the same object each time.
+     * Benchmark one valid static method, or throw an IllegalArgumentException is method is invalid
      * @param <T> The type of data to be fed into <code> method </code> 
      * @param method The method to benchmark
      * @param dataToTest A list of data to use as parameters for <code> method </code>
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
+     * @throws IllegalArgumentException when called with invalid or non-static method
      */
-    private static <T> Stream<BenchmarkStats> _benchmarkStaticMethod(Method method, Stream<T> dataToTest) {
+    private static <T> Stream<BenchmarkStats> _benchmarkStaticMethod(Method method, Stream<T> dataToTest) throws IllegalArgumentException {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         Duration maxDuration = Duration.ofNanos(benchmark.nanoTime());
         String testName = benchmark.testName() == null ? method.getName() : benchmark.testName();
-        if (!Modifier.isStatic(method.getModifiers())) {
-            throw new IllegalArgumentException("Cannot call _benchmarkStaticMethod() on a non-static method");
+        if (!Modifier.isStatic(method.getModifiers()) || !_isValidMethod(method, 1)) {
+            throw new IllegalArgumentException(method+" is either not static, invalid, or both");
         }
         return dataToTest.map((T streamMember) -> 
             {
@@ -109,7 +117,7 @@ public class MethodRunner {
     }
 
     /**
-     * Takes one method, feeds it one input repeatedly, and times how long it takes
+     * Takes one method, feeds it one input repeatedly, and times how long it takes. Assumes method is "valid" as defined by _isValidMethod()
      * @param <T> The type of the input
      * @param method The method to test
      * @param target The object on which to invoke <code> method </code>. If <code> method </code> is a static method, this is ignored (and should be null.)
@@ -136,7 +144,14 @@ public class MethodRunner {
                     && completedLoops <= Integer.MAX_VALUE) {
             clockChecks++;
             for (int i = 0; i < clockFrequency; i++) {
-                method.invoke(target, input);
+                try {
+                    method.invoke(target, input);
+                } catch (ReflectiveOperationException e) {
+                    throw e;
+                } catch (Exception e) {
+                    ClassRunner.printSkipMessage(method, e);
+                    throw new ReflectiveOperationException(e.getMessage());
+                }
                 // increment completedLoops before asking if max has been reached
                 // to prevent extra loop from being performed and overflowing
                 if (++completedLoops == Integer.MAX_VALUE) {
@@ -151,5 +166,24 @@ public class MethodRunner {
         Double id = FormatUtils.getPropertyByName(input, propertyName, idIsMethod);
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
     }
+
+    /**
+     * Checks the provided method to make sure it's accessible and has the correct number of parameters
+     * @param method The method to check
+     * @param instance Instance of <code> method </code>'s declaring class
+     * @param expectedParamCount The number of parameters the method should have
+     * @return boolean indicating whether the method is valid
+     */
+    private static boolean _isValidMethod(Method method, int expectedParamCount) {
+        boolean isStatic = Modifier.isStatic(method.getModifiers());
+        boolean paramCountCorrect = method.getParameterCount() == expectedParamCount;
+        if (isStatic) {
+            return paramCountCorrect && method.canAccess(null);
+        } else {
+            Object instance = ClassRunner.createNewInstance(method.getDeclaringClass());
+            return paramCountCorrect && instance != null && method.canAccess(instance);
+        }
+    }
+
 
 }

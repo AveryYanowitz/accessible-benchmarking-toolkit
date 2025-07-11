@@ -60,7 +60,7 @@ public class Jsonifier {
     }
 
     public void addToJson(List<BenchmarkStats> statsToAdd) {
-        String testName = statsToAdd.get(0).testName();
+        String testName = BenchmarkStats.getTestNameFromList(statsToAdd);
         NamelessStats[] data = new NamelessStats[statsToAdd.size()];
         for (int i = 0; i < data.length; i++) {
             data[i] = new NamelessStats(statsToAdd.get(i));

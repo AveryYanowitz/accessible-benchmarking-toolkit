@@ -15,8 +15,76 @@ import com.slc.tools.util.FormatUtils;
 import com.slc.tools.util.Jsonifier;
 
 public class ClassRunner {
+
     /**
-     * Runs all of the `@Benchmarkable` methods written in a given class and overrides the class's output type.
+     * DOES NOT WORK RIGHT NOW, ONLY RETURNS NULL
+     * Runs all of the `@Benchmarkable` methods written in a given class, using a different Stream to test each method
+     * @param <C> The class that clazz represents (i.e. the class containing `@Benchmarkable` methods)
+     * @param <T> The type of data the Benchmarkable methods take as input
+     * @param clazz The class containing the Benchmarkable methods you want to run
+     * @param inputs One stream of data per Benchmarkable method in clazz, in the same order as the methods in clazz
+     * @return The results of methods with OutputType.RETURN; may be empty
+     * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
+     */
+    public static <C, T> List<BenchmarkStats> multiInputBenchmarks(Class<C> clazz, Stream<?>... inputs)
+                                    throws IOException, IllegalArgumentException {
+        
+        return null;
+        // List<Method> methods = _getBenchmarkMethods(clazz);
+        // if (methods.size() != inputs.length) {
+        //     throw new IllegalArgumentException("Number of methods does not match number of inputs"
+        //                                 +" ("+methods.size()+" versus "+inputs.length+")");
+        // }
+
+        // if (condition) {
+            
+        // }
+
+        // for (int i = 0; i < inputs.length; i++) {
+        //     Method method = methods.get(i);
+        //     Stream<?> dataToTest = inputs[i];
+        //     Stream<BenchmarkStats> results;
+        //     try {                
+        //         switch (whenToInit) {
+        //             case ON_INIT:
+        //                 results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+        //                 break;
+        //             case PER_METHOD:
+        //                 target = createNewInstance(clazz);
+        //                 results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+        //                 break;
+        //             default: // NEVER or PER_SIZE_VALUE
+        //                 results = MethodRunner.benchmarkMethod(method, dataToTest);
+        //                 break;
+        //         }
+        //     } catch (Exception e) {
+        //         System.out.println("Skipping method " + method.getName() + "because: ");
+        //         System.out.println(e.getMessage());
+        //         continue;
+        //     }
+
+        //     switch (outputTo) {
+        //         case PRINT:
+        //             results.forEach((result) -> {
+        //                 System.out.println(result);
+        //             });
+        //             break;
+        //         case JSON:
+        //             jsonifier.addToJson(results);
+        //             break;
+        //         case RETURN:
+        //             results.forEach(resultsList::add);
+        //             break;
+        //     }
+        // }
+        // if (jsonifier.size() > 0) {
+        //     jsonifier.jsonify();
+        // }
+        // return resultsList;
+    }
+
+    /**
+     * Runs all of the `@Benchmarkable` methods written in a given class
      * @param <C> The class that clazz represents (i.e. the class containing `@Benchmarkable` methods)
      * @param <T> The type of data the Benchmarkable methods take as input
      * @param clazz The class containing the Benchmarkable methods you want to run
@@ -25,7 +93,7 @@ public class ClassRunner {
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
      */
-    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, Stream<T> dataToTest) 
+    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest) 
                                     throws IOException {
         Jsonifier jsonifier = Jsonifier.getJsonifier(clazz);
         BenchmarkSuite classAnno = clazz.getAnnotation(BenchmarkSuite.class);
@@ -44,22 +112,21 @@ public class ClassRunner {
         
         for (Method method : _getBenchmarkMethods(clazz)) {
             Stream<BenchmarkStats> results;
-            try {                
+            try {        
                 switch (whenToInit) {
                     case ON_INIT:
-                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+                        results = MethodRunner.benchmarkMethod(method, target, dataToTest.stream());
                         break;
                     case PER_METHOD:
                         target = createNewInstance(clazz);
-                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
+                        results = MethodRunner.benchmarkMethod(method, target, dataToTest.stream());
                         break;
                     default: // NEVER or PER_SIZE_VALUE
-                        results = MethodRunner.benchmarkMethod(method, dataToTest);
+                        results = MethodRunner.benchmarkMethod(method, dataToTest.stream());
                         break;
                 }
             } catch (Exception e) {
-                System.out.println("Skipping method " + method.getName() + "because: ");
-                System.out.println(e.getMessage());
+                printSkipMessage(method, e);
                 continue;
             }
 
@@ -89,13 +156,12 @@ public class ClassRunner {
      * @param <T> The type of data the Benchmarkable methods take as input
      * @param clazz The class containing the Benchmarkable methods you want to run
      * @param dataToTest A list of data to run the benchmark methods on
-     * @param outputOverride Overrides a specified OutputType in clazz
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException When the given JSON file location is invalid, or the file cannot be written to
      */
-    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, List<T> dataToTest) 
+    public static <C, T> List<BenchmarkStats> runBenchmarks(Class<C> clazz, Stream<T> dataToTest) 
                                     throws IOException {
-        return runBenchmarks(clazz, dataToTest.stream());
+        return runBenchmarks(clazz, dataToTest.toList());
     }
 
     /**
@@ -149,6 +215,16 @@ public class ClassRunner {
             e.printStackTrace();
             return null;
         }
+    }
+
+    static void printSkipMessage(Method method, Exception e) {
+        StringBuilder sb = new StringBuilder("Skipping method '");
+        sb.append(method.getName());
+        sb.append("()' because of error...\n");
+        sb.append(e.getClass().getSimpleName());
+        sb.append(": ");
+        sb.append(e.getMessage());
+        System.out.println(sb.toString());
     }
 
     /** Just used to store the default BenchmarkSuite annotation for reference */

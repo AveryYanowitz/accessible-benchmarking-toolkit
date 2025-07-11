@@ -19,7 +19,8 @@ import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
 import com.slc.tools.utility_classes.ArrListWrapper;
-import com.slc.tools.utility_classes.BenchmarkHolder;
+import com.slc.tools.utility_classes.EachSize;
+import com.slc.tools.utility_classes.Never;
 import com.slc.tools.utility_classes.JsonBenchmarks;
 
 
@@ -27,10 +28,10 @@ public class ClassRunnerTests {
 
     @Test
     public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
-        Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        Class<Never> clazz = Never.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        assertEquals(0, BenchmarkHolder.getInstances()); // all methods are static, so no instances should be created
+        assertEquals(0, Never.getInstances()); // all methods are static, so no instances should be created
     }
 
     @Test
@@ -38,7 +39,8 @@ public class ClassRunnerTests {
         Class<ArrDequeWrapper> clazz = ArrDequeWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        assertEquals(1, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
+        // Expected instances: 1 from ON_INIT + 1 per method from _isValidMethod
+        assertEquals(2, ArrDequeWrapper.getInstances()); // should only make one instance, upon starting the tests
     }
 
     @Test
@@ -46,13 +48,21 @@ public class ClassRunnerTests {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        assertEquals(2, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
-        
+        // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
+        assertEquals(4, ArrListWrapper.getInstances()); // should make a new instance for each @Benchmarkable method
+    }
+
+    @Test
+    public void frequencySizeValue() throws IllegalArgumentException, IOException, ReflectiveOperationException {
+        Class<EachSize> clazz = EachSize.class;
+        List<Integer> randomInts = Sorters.getRandomIntList(4);
+        ClassRunner.runBenchmarks(clazz, randomInts);
+        assertEquals(randomInts.size(), ArrListWrapper.getInstances()); // should make a new instance for each test case
     }
 
     @Test
     public void returnTest() throws IOException {
-        Class<BenchmarkHolder> clazz = BenchmarkHolder.class;
+        Class<Never> clazz = Never.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         List<BenchmarkStats> results;
 

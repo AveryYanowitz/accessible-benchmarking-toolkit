@@ -71,4 +71,13 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
                         && testName != null;
     }
 
+    public static String getTestNameFromList(List<BenchmarkStats> list) throws NullPointerException {
+        for (BenchmarkStats stat : list) {
+            if (stat != null) {
+                return stat.testName();
+            }
+        }
+        throw new NullPointerException("All elements of list are null");
+    }
+
 }
