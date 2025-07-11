@@ -8,7 +8,7 @@ import com.slc.tools.runners.LambdaRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.util.Jsonifier;
 
-public class Lambdas {
+public class LambdaMethods {
     public static void main(String[] args) throws Exception {
         Stream<List<Integer>> listStream = Sorters.getRandomIntStream(1000, 10, "linear");
         

@@ -10,6 +10,10 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
         return actualTimeElapsed.toNanos() / loopsCompleted;
     }
 
+    /** Returns a String representation of this object. It's a lot longer than most toString() methods
+     * because it's intended solely for printing to System.out.
+     * @returns the String representation
+     */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -44,6 +48,10 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
         return sb.toString();
     }
 
+    /**
+     * Prints out any number of Lists of BenchmarkStats to the console.
+     * @param results The List(s) to print
+     */
     @SafeVarargs
     public static void printStats(List<BenchmarkStats>... results) {
         for (List<BenchmarkStats> result : results) {

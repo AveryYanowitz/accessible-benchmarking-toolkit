@@ -11,6 +11,7 @@ import com.slc.tools.util.FormatUtils;
 public class LambdaRunner {
     /**
      * Takes a Stream of objects and time-tests each of them, returning a new Stream of the results.
+     * This is a terminal operation on dataToTest.
      * @param <T> The type of the object to be tested
      * @param methodToTest An algorithm to test
      * @param dataToTest A Stream of objects which will be passed to the provided method
@@ -31,7 +32,7 @@ public class LambdaRunner {
     }
 
     /**
-     * Takes a Stream of objects and time-tests each of them, returning a new Stream of the results.
+     * Takes an Iterable of objects and time-tests each of them, returning a Stream of the results.
      * @param <T> The type of the object to be tested
      * @param methodToTest An algorithm to test
      * @param dataToTest An Iterable of objects which will be passed to the provided method
@@ -51,7 +52,7 @@ public class LambdaRunner {
     }
 
     /**
-     * Takes a Stream of objects and time-tests each of them, returning a new Stream of the results.
+     * Takes an array of objects and time-tests each of them, returning a Stream of the results.
      * @param <T> The type of the object to be tested
      * @param methodToTest An algorithm to test
      * @param dataToTest An array of objects which will be passed to the provided method
@@ -134,6 +135,18 @@ public class LambdaRunner {
         return benchmarkConsumable(asConsumer, asStream, maxDuration, clockFrequency, idName, idIsMethod, testName);
     }
 
+    /**
+     * Takes one consumer, feeds it one input repeatedly, and times how long it takes
+     * @param <T> The type of the input
+     * @param consumer The consumer function to test
+     * @param object The input to feed to the consumer
+     * @param maxDuration The ideal maximum time for the benchmark to take; note that it may take longer, especially if clockFrequency is high
+     * @param clockFrequency How many times to call the consumer between checking if maxDuration has elapsed yet
+     * @param propertyName The name of the field or method of object that represents this run's unique ID
+     * @param idIsMethod True if property name represents a method, false if it represents a field
+     * @param testName An identifier for all the tests of the same consumer
+     * @return A single BenchmarkStats object representing the results of this run
+     */
     private static <T> BenchmarkStats _singleConsumerTest(Consumer<T> consumer, T object,  
                                     Duration maxDuration, int clockFrequency, 
                                     String propertyName, boolean idIsMethod, String testName) {
