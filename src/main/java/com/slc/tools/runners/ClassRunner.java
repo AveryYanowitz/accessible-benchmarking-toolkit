@@ -64,8 +64,8 @@ public class ClassRunner {
                 target = createNewInstance(clazz);
             }
 
-            MethodRunner<C> methodRunner = new MethodRunner<C>(method, target, dataToTest);
             try {
+                MethodRunner<C> methodRunner = new MethodRunner<C>(method, target, dataToTest);
                 results = methodRunner.benchmark();
             } catch (Exception e) {
                 printSkipMessage(method, e);

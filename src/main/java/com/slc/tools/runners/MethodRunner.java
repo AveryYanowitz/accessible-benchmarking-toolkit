@@ -19,7 +19,14 @@ public class MethodRunner<C> {
     final String _TEST_NAME;
     final boolean _IS_STATIC, _NEEDS_ARGS;
 
-    MethodRunner(Method method, C target, Stream<?> dataStream) {
+    /**
+     * Creates a new MethodRunner based around the given method, to be called on the given target with the given dataStream
+     * @param method The method to be run with this MethodRunner instance
+     * @param target The target to invoke the method on, or null if the method should construct a new target for each benchmark
+     * @param dataStream The data to test this method on, or null if the method has no input arguments
+     * @throws IllegalStateException
+     */
+    MethodRunner(Method method, C target, Stream<?> dataStream) throws IllegalStateException {
         Benchmarkable benchmark = method.getAnnotation(Benchmarkable.class);
         
         _METHOD = method;
@@ -34,7 +41,9 @@ public class MethodRunner<C> {
             _TARGET = null;
         } else {
             _TARGET = target;
-        }        
+        }
+        
+        _checkIfValid();
     }
     
     /**
@@ -45,10 +54,9 @@ public class MethodRunner<C> {
      * @param method The method to test
      * @param dataToTest A Stream of data to call <code> method </code> with
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
-     * @throws IllegalArgumentException When called with invalid method
      */
     @SuppressWarnings("unchecked")
-    protected Stream<BenchmarkStats> benchmark() throws IllegalArgumentException {
+    protected Stream<BenchmarkStats> benchmark() {
         
         return _DATA_TO_TEST.map((Object streamMember) -> {
             try {
@@ -135,6 +143,34 @@ public class MethodRunner<C> {
         Duration elapsedTime = Duration.ofNanos(nanosElapsed);
         Double size = FormatUtils.getPropertyByName(input, _TEST_NAME);
         return new BenchmarkStats(clockChecks, _CLOCK_FREQ, _MAX_DURATION, completedLoops, elapsedTime, size, _TEST_NAME);
+    }
+
+    /**
+     * Checks the provided method to make sure it's accessible and has the correct number of parameters
+     * @param method The method to check
+     * @param instance Instance of <code> method </code>'s declaring class
+     * @param expectedParamCount The number of parameters the method should have
+     * @return boolean indicating whether the method is valid
+     */
+    private void _checkIfValid() throws IllegalArgumentException {
+        int expectedParamCount = _NEEDS_ARGS ? 1 : 0;
+        boolean paramCountCorrect = _METHOD.getParameterCount() == expectedParamCount;
+
+        StringBuilder errors = new StringBuilder(_TEST_NAME);
+        errors.append("has the following errors:\n");
+        if (!paramCountCorrect) {
+            throw new IllegalArgumentException("Wrong number of params: expected <"+expectedParamCount+"> but got <"+_METHOD.getParameterCount()+">");
+        }
+
+        if (_IS_STATIC && !_METHOD.canAccess(null)) {
+            throw new IllegalArgumentException("Unable to access method in test "+_TEST_NAME);
+        } else if (!_IS_STATIC) {
+            Object instance = ClassRunner.createNewInstance(_METHOD.getDeclaringClass());
+            if (instance == null || !_METHOD.canAccess(instance)) {
+                throw new IllegalArgumentException("Unable to access method in test "+_TEST_NAME);
+            }
+        }
+        
     }
 
 }

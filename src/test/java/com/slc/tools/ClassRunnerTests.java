@@ -52,7 +52,8 @@ public class ClassRunnerTests {
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
 
-        assertEquals(1, ArrDequeWrapper.getInstances());
+        // Expected instances: 1 from ON_INIT + 1 per method from _isValidMethod
+        assertEquals(3, ArrDequeWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
@@ -66,7 +67,8 @@ public class ClassRunnerTests {
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
 
-        assertEquals(2, ArrListWrapper.getInstances());
+        // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
+        assertEquals(4, ArrListWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
@@ -94,6 +96,7 @@ public class ClassRunnerTests {
         List<BenchmarkStats> results;
 
         results = ClassRunner.runBenchmarks(clazz, randomInts);
+        // Expected size: 2 methods * 4 test cases = 8
         assertEquals(8, results.size());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
