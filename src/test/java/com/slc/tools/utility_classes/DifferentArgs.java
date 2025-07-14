@@ -15,4 +15,6 @@ public class DifferentArgs {
     @Benchmarkable(nanoTime = 10_000_000)
     public void objectArg(Object x) {  }
 
+    @Benchmarkable(nanoTime = 10_000_000)
+    public void noArgs() {  }
 }

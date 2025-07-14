@@ -171,7 +171,7 @@ public class LambdaRunner {
 
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(elapsedRaw);
-        Double id = FormatUtils.getPropertyByName(object, propertyName, idIsMethod);
+        Double id = FormatUtils.getPropertyByName(object, propertyName);
         return new BenchmarkStats(clockChecks, clockFrequency, maxDuration, completedLoops, elapsedTime, id, testName);
     }
     

@@ -52,8 +52,7 @@ public class ClassRunnerTests {
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
 
-        // Expected instances: 1 from ON_INIT + 1 per method from _isValidMethod
-        assertEquals(3, ArrDequeWrapper.getInstances());
+        assertEquals(1, ArrDequeWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
@@ -66,8 +65,8 @@ public class ClassRunnerTests {
         Class<ArrListWrapper> clazz = ArrListWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
-        assertEquals(4, ArrListWrapper.getInstances());
+
+        assertEquals(2, ArrListWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
@@ -119,6 +118,7 @@ public class ClassRunnerTests {
             afterText = _getJsonText();
         } catch (Exception e) {
             fail(e.getMessage());
+            e.printStackTrace();
             return;
         }
 
@@ -136,13 +136,13 @@ public class ClassRunnerTests {
         List<Boolean> boolArgs = Sorters.getRandomBoolList(4);
         List<Object> objArgs = Sorters.getObjList(4);
         
-        List<BenchmarkStats> results = ClassRunner.runBenchmarks(clazz, boolArgs, intArgs, objArgs);
+        List<BenchmarkStats> results = ClassRunner.runBenchmarks(clazz, boolArgs, intArgs, null, objArgs);
         
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
 
-        // Expected: 4 tries each of intArgs, boolArgs, and objArgs
-        assertEquals(12, results.size());
+        // Expected: 4 tries each of intArgs, boolArgs, and objArgs, plus 1 of noArgs
+        assertEquals(13, results.size());
     }
 
     private static String _getJsonText() {

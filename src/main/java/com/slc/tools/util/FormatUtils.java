@@ -96,20 +96,21 @@ public class FormatUtils {
      * @param searchMethods True if the property is a method, false if it's a field
      * @return The value of the property, or null if the property doesn't exist or isn't a number
      */
-    public static <T> Double getPropertyByName(T object, String propertyName, boolean searchMethods) {
+    public static <T> Double getPropertyByName(T object, String propertyName) {
         try {
-            String value;
-            if (searchMethods) {            
-                Method method = object.getClass().getMethod(propertyName);
-                method.setAccessible(true);
-                value = method.invoke(object).toString();
-            } else {
-                Field field = object.getClass().getDeclaredField(propertyName);
-                field.setAccessible(true);
+            String value = null;
+            Method[] methods = object.getClass().getMethods();
+            for (Method method : methods) {
+                if (method.getName() == propertyName) {
+                    value = method.invoke(object).toString();
+                }
+            }
+            if (value == null) {
+                Field field = object.getClass().getField(propertyName);
                 value = field.get(object).toString();
             }
             return Double.parseDouble(value);
-        } catch (ReflectiveOperationException | NumberFormatException e) {
+        } catch (Exception e) {
             return null;
         }
     }

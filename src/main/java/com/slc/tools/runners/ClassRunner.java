@@ -20,7 +20,7 @@ public class ClassRunner {
      * Runs all of the `@Benchmarkable` methods written in a given class, using a different List to test each method.
      * If there are more methods than Lists, the program will use the last-provided list for all the extra methods.
      * For example, if you provide a class with three that each take one integer as input, and only two Lists of integers,
-     * the first method will be run with the first list, and the second method with the second list. The third method
+     * the first method (alphabetically) will be run with the first list, and the second method with the second list. The third method
      * will then <b> also </b> be run with the third list.
      * 
      * <p> If more inputs are provided than Benchmarkable methods in the class, a warning will be printed to System.out
@@ -60,19 +60,13 @@ public class ClassRunner {
             Method method = methods.get(i);
             Stream<?> dataToTest = _getDataStreamAtIndex(inputs, i);
             Stream<BenchmarkStats> results;
-            try {        
-                switch (whenToInit) {
-                    case ON_INIT:
-                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
-                        break;
-                    case PER_METHOD:
-                        target = createNewInstance(clazz);
-                        results = MethodRunner.benchmarkMethod(method, target, dataToTest);
-                        break;
-                    default: // NEVER or PER_SIZE_VALUE
-                        results = MethodRunner.benchmarkMethod(method, dataToTest);
-                        break;
-                }
+            if (whenToInit == Frequency.PER_METHOD) {
+                target = createNewInstance(clazz);
+            }
+
+            MethodRunner<C> methodRunner = new MethodRunner<C>(method, target, dataToTest);
+            try {
+                results = methodRunner.benchmark();
             } catch (Exception e) {
                 printSkipMessage(method, e);
                 continue;
@@ -178,6 +172,7 @@ public class ClassRunner {
         sb.append(": ");
         sb.append(e.getMessage());
         System.out.println(sb.toString());
+        e.printStackTrace();
     }
 
     /** Just used to store the default BenchmarkSuite annotation for reference */
