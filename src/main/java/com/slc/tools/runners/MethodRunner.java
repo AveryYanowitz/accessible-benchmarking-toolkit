@@ -9,7 +9,6 @@ import com.slc.tools.annotations.Benchmarkable;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.util.FormatUtils;
 
-
 public class MethodRunner<C> {
     final Method _METHOD;
     final C _TARGET;
@@ -35,7 +34,7 @@ public class MethodRunner<C> {
         _TEST_NAME = (benchmark.testName() == null) ? method.getName() : benchmark.testName();
         _IS_STATIC = Modifier.isStatic(_METHOD.getModifiers());
         _NEEDS_ARGS = method.getParameterCount() > 0;
-        _DATA_TO_TEST = (dataStream == null) ? Stream.of(new int[0]) : dataStream;
+        _DATA_TO_TEST = (dataStream == null) ? Stream.of("arbitrary non-null placeholder") : dataStream;
 
         if (_IS_STATIC) {
             _TARGET = null;
@@ -56,8 +55,7 @@ public class MethodRunner<C> {
      * @return A Stream of BenchmarkStats representing the results of calling <code> method </code> on each element of <code> dataToTest </code>
      */
     @SuppressWarnings("unchecked")
-    protected Stream<BenchmarkStats> benchmark() {
-        
+    protected Stream<BenchmarkStats> benchmark() {        
         return _DATA_TO_TEST.map((Object streamMember) -> {
             try {
                 C nonNullTarget;
