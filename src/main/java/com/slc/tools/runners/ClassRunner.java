@@ -30,8 +30,7 @@ public class ClassRunner {
      * @param <C> The class that clazz represents (i.e. the class containing `@Benchmarkable` methods)
      * @param <T> The type of data the Benchmarkable methods take as input
      * @param clazz The class containing the Benchmarkable methods you want to run
-     * @param inputs One stream of data per Benchmarkable method in clazz, in the same order as the methods in clazz. Methods
-     *               that take no inputs should be represented here by adding <code> null </code> at the corresponding index.
+     * @param inputs One stream of data per Benchmarkable method in clazz, matching the alphabetical order of the methods in clazz.
      * @return The results of methods with OutputType.RETURN; may be empty
      * @throws IOException When trying to output to JSON file, but the location is invalid or the file cannot be edited
      */
