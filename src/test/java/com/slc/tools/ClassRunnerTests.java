@@ -29,6 +29,7 @@ import com.slc.tools.utility_classes.JsonBenchmarks;
 
 
 public class ClassRunnerTests {
+
     @Test
     public void frequencyNever() throws IllegalArgumentException, IOException, ReflectiveOperationException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -38,7 +39,8 @@ public class ClassRunnerTests {
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(0, Never.getInstances()); // all methods are static, so no instances should be created
-        assertFalse(out.toString().contains("Skipping method"));
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
 
     @Test
@@ -52,7 +54,8 @@ public class ClassRunnerTests {
 
         // Expected instances: 1 from ON_INIT + 1 per method from _isValidMethod
         assertEquals(3, ArrDequeWrapper.getInstances());
-        assertFalse(out.toString().contains("Skipping method"));
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
 
     @Test
@@ -65,7 +68,8 @@ public class ClassRunnerTests {
         ClassRunner.runBenchmarks(clazz, randomInts);
         // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
         assertEquals(4, ArrListWrapper.getInstances());
-        assertFalse(out.toString().contains("Skipping method"));
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
 
     @Test
@@ -77,7 +81,8 @@ public class ClassRunnerTests {
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(randomInts.size(), ArrListWrapper.getInstances());
-        assertFalse(out.toString().contains("Skipping method"));
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
 
     @Test
@@ -91,7 +96,8 @@ public class ClassRunnerTests {
 
         results = ClassRunner.runBenchmarks(clazz, randomInts);
         assertEquals(8, results.size());
-        assertFalse(out.toString().contains("Skipping method"));
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
         
         for (BenchmarkStats result : results) {
             assertNotNull(result);
@@ -130,10 +136,13 @@ public class ClassRunnerTests {
         List<Boolean> boolArgs = Sorters.getRandomBoolList(4);
         List<Object> objArgs = Sorters.getObjList(4);
         
-        List<BenchmarkStats> results = ClassRunner.runBenchmarks(clazz, intArgs, boolArgs, objArgs);
-        assertFalse(out.toString().contains("Skipping method"));
-        // Expected: 4 tries of intArgs, boolArgs, and objArgs, and 1 try of noArgs
-        assertEquals(13, results.size());        
+        List<BenchmarkStats> results = ClassRunner.runBenchmarks(clazz, boolArgs, intArgs, objArgs);
+        
+        String outTxt = out.toString();
+        assertFalse(outTxt.contains("Skipping method"), outTxt);
+
+        // Expected: 4 tries each of intArgs, boolArgs, and objArgs
+        assertEquals(12, results.size());
     }
 
     private static String _getJsonText() {

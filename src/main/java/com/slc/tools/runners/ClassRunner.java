@@ -127,13 +127,20 @@ public class ClassRunner {
                 annotatedMethods.add(method);
             }
         }
+        annotatedMethods.sort((method1, method2) -> method1.getName().compareTo(method2.getName()));
         return annotatedMethods;
     }
 
-    private static Stream<?> _getDataStreamAtIndex(List<?>[] inputs, int index) {
+    /**
+     * Return the nth element of inputs as a stream (via the <code>stream()</code> method), with error handling.
+     * @param inputs All the inputs to search
+     * @param n The index to look at
+     * @return inputs[n] as a stream, or if n >= inputs.length, the final element of inputs as a stream, or null if that specified element is null
+     */
+    private static Stream<?> _getDataStreamAtIndex(List<?>[] inputs, int n) {
         List<?> list;
-        if (index < inputs.length) {
-            list = inputs[index];
+        if (n < inputs.length) {
+            list = inputs[n];
         } else {
             list = inputs[inputs.length - 1];
         }

@@ -149,6 +149,7 @@ public class MethodRunner {
                     throw e;
                 } catch (Exception e) {
                     ClassRunner.printSkipMessage(method, e);
+                    System.out.println(input);
                     throw new ReflectiveOperationException(e.getMessage());
                 }
                 // increment completedLoops before asking if max has been reached
