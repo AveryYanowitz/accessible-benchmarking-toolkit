@@ -21,7 +21,7 @@ import com.slc.tools.examples.Sorters;
 import com.slc.tools.runners.ClassRunner;
 import com.slc.tools.util.BenchmarkStats;
 import com.slc.tools.utility_classes.ArrDequeWrapper;
-import com.slc.tools.utility_classes.ArrListWrapper;
+import com.slc.tools.utility_classes.LinkQueueWrapper;
 import com.slc.tools.utility_classes.DifferentArgs;
 import com.slc.tools.utility_classes.EachSize;
 import com.slc.tools.utility_classes.Never;
@@ -63,12 +63,12 @@ public class ClassRunnerTests {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         System.setOut(new PrintStream(out));
 
-        Class<ArrListWrapper> clazz = ArrListWrapper.class;
+        Class<LinkQueueWrapper> clazz = LinkQueueWrapper.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
 
         // Expected instances: 1 per method from PER_METHOD + 1 per method from _isValidMethod
-        assertEquals(4, ArrListWrapper.getInstances());
+        assertEquals(4, LinkQueueWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
@@ -81,7 +81,7 @@ public class ClassRunnerTests {
         Class<EachSize> clazz = EachSize.class;
         List<Integer> randomInts = Sorters.getRandomIntList(4);
         ClassRunner.runBenchmarks(clazz, randomInts);
-        assertEquals(randomInts.size(), ArrListWrapper.getInstances());
+        assertEquals(randomInts.size(), LinkQueueWrapper.getInstances());
         String outTxt = out.toString();
         assertFalse(outTxt.contains("Skipping method"), outTxt);
     }
