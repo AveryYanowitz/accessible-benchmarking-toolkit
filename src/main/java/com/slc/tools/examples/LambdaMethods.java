@@ -10,13 +10,13 @@ import com.slc.tools.util.Jsonifier;
 
 public class LambdaMethods {
     public static void main(String[] args) throws Exception {
-        Stream<List<Integer>> listStream = Sorters.getRandomIntStream(1000, 10, "linear");
+        Stream<List<Integer>> listStream = Sorters.getRandomIntStream(1000, 10, Sorters.TestGrowth.LINEAR);
         
         Stream<BenchmarkStats> results1 = LambdaRunner.benchmarkConsumable(Sorters::bubbleSort, listStream,
                 Duration.ofMillis(1000), 10,
                 "size", true, "bubbleSort");
 
-        Stream<List<Integer>> listStream2 = Sorters.getRandomIntStream(1000, 10, "linear");
+        Stream<List<Integer>> listStream2 = Sorters.getRandomIntStream(1000, 10, Sorters.TestGrowth.LINEAR);
 
         Stream<BenchmarkStats> results2 = LambdaRunner.benchmarkConsumable(Sorters::insertionSort, listStream2,
                 Duration.ofMillis(100), 10,

@@ -35,7 +35,7 @@ public class Jsonifier {
     
     public Jsonifier() {
         dataFields = new ArrayList<>();
-        destinationFile = new File("src/output/results.json");
+        destinationFile = new File("src/main/output/results.json");
     }
 
     @SafeVarargs

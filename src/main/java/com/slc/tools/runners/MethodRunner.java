@@ -35,7 +35,7 @@ public class MethodRunner<C> {
         _ID_NAME = benchmark.idName();
         _IS_STATIC = Modifier.isStatic(_METHOD.getModifiers());
         _NEEDS_ARGS = method.getParameterCount() > 0;
-        _DATA_TO_TEST = (dataStream == null) ? Stream.of("arbitrary non-null placeholder") : dataStream;
+        _DATA_TO_TEST = (dataStream == null) ? Stream.of("arbitrary placeholder") : dataStream;
 
         if (_IS_STATIC) {
             _TARGET = null;
@@ -59,14 +59,14 @@ public class MethodRunner<C> {
     protected Stream<BenchmarkStats> benchmark() {        
         return _DATA_TO_TEST.map((Object streamMember) -> {
             try {
-                C nonNullTarget;
-                if (_TARGET == null && !_IS_STATIC) { 
+                C nullSafeTarget;
+                if (!_IS_STATIC && _TARGET == null) { 
                     // means we need to create a new instance on every invocation of benchmark()
-                    nonNullTarget = (C) ClassRunner.createNewInstance(_METHOD.getDeclaringClass());
+                    nullSafeTarget = (C) ClassRunner.createNewInstance(_METHOD.getDeclaringClass());
                 } else {
-                    nonNullTarget = _TARGET; // if static, null; otherwise, definitely not null
+                    nullSafeTarget = _TARGET; // if static, null; otherwise, definitely not null
                 }
-                return _singleMethodTest(nonNullTarget, streamMember);
+                return _singleMethodTest(nullSafeTarget, streamMember);
             } catch (ReflectiveOperationException e) {
                 e.printStackTrace();
                 return null;
@@ -104,6 +104,9 @@ public class MethodRunner<C> {
                         _METHOD.invoke(target, input);
                     } catch (ReflectiveOperationException e) {
                         throw e;
+                    } catch (IllegalArgumentException e) {
+                        ClassRunner.printSkipMessage(_METHOD, e);
+                        System.out.println("Argument given: "+input);
                     } catch (Exception e) {
                         ClassRunner.printSkipMessage(_METHOD, e);
                         throw new ReflectiveOperationException(e.getMessage());

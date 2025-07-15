@@ -50,25 +50,30 @@ public class Sorters {
         arr.set(0, n);
     }
 
+    public enum TestGrowth {
+        LINEAR,
+        EXPONENTIAL
+    }
+
     /** Generate Streams for testing automatically
      * @param minSize minimum size of the lists to generate, list size increases linearly relative to listNUmber
      * @param listNumber number of lists to generate
-     * @param testGrowth specify growth rate of "size" in tests, either "linear" or "exponential"
+     * @param testGrowth specify growth rate of "size" in tests, either TestGrowth.LINEAR or TestGrowth.EXPONENTIAL
      * @return a stream of 
      */
-    public static Stream<List<Integer>> getRandomIntStream(int minSize, int listNumber, String testGrowth) {
+    public static Stream<List<Integer>> getRandomIntStream(int minSize, int listNumber, TestGrowth testGrowth) {
         Stream.Builder<List<Integer>> sb = Stream.builder();
-        testGrowth = testGrowth.toLowerCase();
-        if (testGrowth.equals("linear")) {
-            for (int i = 0; i < listNumber; i++) {
-                sb.add(getRandomIntList((1 + i) * minSize));
-            }
-        } else if (testGrowth.equals("exponential")) {
-            for (int i = 0; i < listNumber; i++) {
-                sb.add(getRandomIntList((1 << i) * minSize));
-            }
-        } else {
-            throw new RuntimeException("invalid growth rate: " + testGrowth);
+        switch (testGrowth) {
+            case LINEAR:
+                for (int i = 0; i < listNumber; i++) {
+                    sb.add(getRandomIntList((1 + i) * minSize));
+                }                
+                break;
+            case EXPONENTIAL:
+                for (int i = 0; i < listNumber; i++) {
+                    sb.add(getRandomIntList((1 << i) * minSize));
+                }
+                break;
         }
         return sb.build();
     }

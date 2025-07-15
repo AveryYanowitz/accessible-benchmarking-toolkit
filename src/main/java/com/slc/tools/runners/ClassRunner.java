@@ -3,7 +3,6 @@ package com.slc.tools.runners;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -102,7 +101,11 @@ public class ClassRunner {
      */
     public static <C> List<BenchmarkStats> runBenchmarks(Class<C> clazz, Stream<?>... inputs) 
                                     throws IOException {
-        return runBenchmarks(clazz, Arrays.asList(inputs));
+        List<?>[] inputsAsList = new List<?>[inputs.length];
+        for (int i = 0; i < inputs.length; i++) {
+            inputsAsList[i] = inputs[i].toList();
+        }
+        return runBenchmarks(clazz, inputsAsList);
     }
     
     /**
