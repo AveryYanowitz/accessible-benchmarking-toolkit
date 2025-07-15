@@ -103,7 +103,7 @@ public class ClassRunnerTests {
         
         for (BenchmarkStats result : results) {
             assertNotNull(result);
-            assertTrue(result.isComplete());
+            assertTrue(result.isComplete(), out.toString());
         }
     }
 

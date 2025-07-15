@@ -15,7 +15,7 @@ public class MethodRunner<C> {
     final Stream<?> _DATA_TO_TEST;
     final Duration _MAX_DURATION;
     final int _CLOCK_FREQ;
-    final String _TEST_NAME;
+    final String _TEST_NAME, _ID_NAME;
     final boolean _IS_STATIC, _NEEDS_ARGS;
 
     /**
@@ -32,6 +32,7 @@ public class MethodRunner<C> {
         _MAX_DURATION = Duration.ofNanos(benchmark.nanoTime());
         _CLOCK_FREQ = benchmark.clockFrequency();
         _TEST_NAME = (benchmark.testName() == null) ? method.getName() : benchmark.testName();
+        _ID_NAME = benchmark.idName();
         _IS_STATIC = Modifier.isStatic(_METHOD.getModifiers());
         _NEEDS_ARGS = method.getParameterCount() > 0;
         _DATA_TO_TEST = (dataStream == null) ? Stream.of("arbitrary non-null placeholder") : dataStream;
@@ -139,7 +140,7 @@ public class MethodRunner<C> {
 
         clockChecks++; // last check returned false, so it didn't increment
         Duration elapsedTime = Duration.ofNanos(nanosElapsed);
-        Double size = FormatUtils.getPropertyByName(input, _TEST_NAME);
+        Double size = FormatUtils.getPropertyByName(input, _ID_NAME);
         return new BenchmarkStats(clockChecks, _CLOCK_FREQ, _MAX_DURATION, completedLoops, elapsedTime, size, _TEST_NAME);
     }
 
@@ -157,18 +158,17 @@ public class MethodRunner<C> {
         StringBuilder errors = new StringBuilder(_TEST_NAME);
         errors.append("has the following errors:\n");
         if (!paramCountCorrect) {
-            throw new IllegalArgumentException("Wrong number of params: expected <"+expectedParamCount+"> but got <"+_METHOD.getParameterCount()+">");
+            throw new IllegalArgumentException("Wrong number of params for method "+_METHOD.getName()+": expected <"+expectedParamCount+"> but got <"+_METHOD.getParameterCount()+">");
         }
 
         if (_IS_STATIC && !_METHOD.canAccess(null)) {
-            throw new IllegalArgumentException("Unable to access method in test "+_TEST_NAME);
+            throw new IllegalArgumentException("Unable to access method "+_METHOD.getName());
         } else if (!_IS_STATIC) {
             Object instance = ClassRunner.createNewInstance(_METHOD.getDeclaringClass());
             if (instance == null || !_METHOD.canAccess(instance)) {
-                throw new IllegalArgumentException("Unable to access method in test "+_TEST_NAME);
+                throw new IllegalArgumentException("Unable to access method "+_METHOD.getName());
             }
         }
-        
     }
 
 }

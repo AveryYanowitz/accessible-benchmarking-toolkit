@@ -99,18 +99,27 @@ public class FormatUtils {
     public static <T> Double getPropertyByName(T object, String propertyName) {
         try {
             String value = null;
+            boolean wasMethod = false;
             Method[] methods = object.getClass().getMethods();
             for (Method method : methods) {
-                if (method.getName() == propertyName) {
+                System.out.println("METHOD: "+method.getName());
+                if (method.getName().equals(propertyName)) {
                     value = method.invoke(object).toString();
+                    wasMethod = true;
+                    break;
                 }
             }
-            if (value == null) {
+            if (!wasMethod) {
                 Field field = object.getClass().getField(propertyName);
                 value = field.get(object).toString();
             }
             return Double.parseDouble(value);
-        } catch (Exception e) {
+        } catch (ReflectiveOperationException e) {
+            System.out.println("unable to get property name "+propertyName+" from object "+object+" because ROE: "+e.getMessage());
+            e.printStackTrace();
+            return null;
+        } catch (NumberFormatException e) {
+            System.out.println("unable to get property name "+propertyName+" from object "+object+" because NFE: "+e.getMessage());
             return null;
         }
     }
