@@ -102,7 +102,6 @@ public class FormatUtils {
             boolean wasMethod = false;
             Method[] methods = object.getClass().getMethods();
             for (Method method : methods) {
-                System.out.println("METHOD: "+method.getName());
                 if (method.getName().equals(propertyName)) {
                     value = method.invoke(object).toString();
                     wasMethod = true;
@@ -115,11 +114,9 @@ public class FormatUtils {
             }
             return Double.parseDouble(value);
         } catch (ReflectiveOperationException e) {
-            System.out.println("unable to get property name "+propertyName+" from object "+object+" because ROE: "+e.getMessage());
             e.printStackTrace();
             return null;
         } catch (NumberFormatException e) {
-            System.out.println("unable to get property name "+propertyName+" from object "+object+" because NFE: "+e.getMessage());
             return null;
         }
     }

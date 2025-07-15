@@ -49,19 +49,6 @@ public record BenchmarkStats(int clockChecks, int loopsBetweenChecks, Duration m
     }
 
     /**
-     * Prints out any number of Lists of BenchmarkStats to the console.
-     * @param results The List(s) to print
-     */
-    @SafeVarargs
-    public static void printStats(List<BenchmarkStats>... results) {
-        for (List<BenchmarkStats> result : results) {
-            for (BenchmarkStats stats : result) {
-                System.out.println(stats);
-            }
-        }
-    }
-
-    /**
      * Primarily for unit testing
      * @return Whether all fields are defined and greater than zero
      */
