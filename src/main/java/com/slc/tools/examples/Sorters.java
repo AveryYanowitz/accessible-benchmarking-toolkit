@@ -82,6 +82,15 @@ public class Sorters {
         return list;
     }
 
+    public static List<Integer> getRandomIntList(int size, int min, int max) {
+        List<Integer> list = new ArrayList<>();
+        Random random = new Random();
+        for (int i = 0; i < size; i++) {
+            list.add(random.nextInt(min, max));
+        }
+        return list;
+    }
+
     public static List<Boolean> getRandomBoolList(int size) {
         List<Boolean> list = new ArrayList<>();
         Random random = new Random();

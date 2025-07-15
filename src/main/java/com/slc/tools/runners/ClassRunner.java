@@ -53,7 +53,7 @@ public class ClassRunner {
         
         List<Method> methods = _getBenchmarkMethods(clazz);
         if (methods.size() < inputs.length) {
-            System.out.println("NOTE: Too many inputs ("+inputs.length+") provided for "
+            System.out.println("WARNING: Too many inputs ("+inputs.length+") provided for "
                                 +"number of methods ("+methods.size()+", skipping extras)");
         }
         for (int i = 0; i < methods.size(); i++) {

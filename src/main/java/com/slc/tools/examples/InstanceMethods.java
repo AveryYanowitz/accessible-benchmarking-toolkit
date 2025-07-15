@@ -13,7 +13,7 @@ import edu.slc.cs.stack_queue_comparison.ArrayListQueue;
 import edu.slc.cs.stack_queue_comparison.LinkQueue;
 import edu.slc.cs.stack_queue_comparison.Queue;
 
-@BenchmarkSuite(outputTo = OutputType.PRINT, whenToInstantiate = Frequency.PER_SIZE_VALUE)
+@BenchmarkSuite(outputTo = OutputType.JSON, whenToInstantiate = Frequency.PER_SIZE_VALUE)
 public class InstanceMethods {
     private Queue<Integer> _q1, _q2;
 
@@ -22,12 +22,12 @@ public class InstanceMethods {
         _q2 = new LinkQueue<>();
     }
     
-    @Benchmarkable(testName = "ArrayList Queue", idName = "intValue")
+    @Benchmarkable(testName = "ArrayList Queue", idName = "intValue", idIsMethod = true)
     public void arrListBenchmark(int n) {
         _massQueueing(_q1, n);
     }
 
-    @Benchmarkable(testName = "Linked Queue", idName = "intValue")
+    @Benchmarkable(testName = "Linked Queue", idName = "intValue", idIsMethod = true)
     public void linkEnqueue(int n) {
         _massQueueing(_q2, n);
     }
@@ -42,7 +42,7 @@ public class InstanceMethods {
     }
 
     public static void main(String[] args) throws IllegalArgumentException, IOException, ReflectiveOperationException {
-        List<Integer> sizes = Sorters.getRandomIntList(10);
+        List<Integer> sizes = Sorters.getRandomIntList(10, 1, 25);
         ClassRunner.runBenchmarks(InstanceMethods.class, sizes);
     }
 
